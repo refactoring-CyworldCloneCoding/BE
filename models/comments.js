@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Users, { foreignKey: 'userId' });
+      this.belongsTo(models.Myhomes, { foreignKey: 'myhomeId' });
     }
   }
   Comments.init(
@@ -20,18 +20,18 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true, // PRIMARY KEY, 기본키
         type: DataTypes.INTEGER,
       },
-      diaryId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      userId: {
+      myhomeId: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-          model: 'Users',
-          key: 'userId',
+          model: 'Myhomes',
+          key: 'myhomeId',
         },
         onDelete: 'cascade',
+      },
+      diaryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,

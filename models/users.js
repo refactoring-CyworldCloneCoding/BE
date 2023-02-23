@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
         as: 'Guestbooks',
         foreignKey: 'userId',
       });
+      this.hasOne(models.Myhomes, {
+        as: 'Myhomes',
+        foreignKey: 'userId',
+      });
       // this.hasMany(models.Ilchons, {
       //   as: 'Ilchons',
       //   foreignKey: 'userId',
@@ -60,35 +64,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      intro: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'default',
-      },
-      today: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      total: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0,
-      },
-      refreshToken: {
-        type: DataTypes.STRING,
-      },
-      snsId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      provider: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       dotori: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
       },
     },
     {

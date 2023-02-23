@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Ilchonpyungs extends Model {
+  class Users extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,54 +9,62 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Users, { foreignKey: 'userId' });
-      this.belongsTo(models.Myhomes, { foreignKey: 'myhomeId' });
+      this.hasMany(models.Ilchonpyungs, {
+        as: 'Ilchonpyungs',
+        foreignKey: 'myhomeId',
+      });
+      this.hasMany(models.Diaries, {
+        as: 'Diaries',
+        foreignKey: 'myhomeId',
+      });
+      this.hasMany(models.Comments, {
+        as: 'Comments',
+        foreignKey: 'myhomeId',
+      });
+      this.hasMany(models.Guestbooks, {
+        as: 'Guestbooks',
+        foreignKey: 'myhomeId',
+      });
     }
   }
-  Ilchonpyungs.init(
+  Myhomes.init(
     {
-      ilchonpyungId: {
+      myhomeId: {
         allowNull: false, // NOT NULL, Null을 허용하지 않음
         autoIncrement: true, // AUTO_INCREMENT
         primaryKey: true, // PRIMARY KEY, 기본키
         unique: true,
         type: DataTypes.INTEGER,
       },
-      myhomeId: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Myhomes',
-          key: 'myhomeId',
-        },
-        onDelete: 'cascade',
-      },
       userId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'Users',
           key: 'userId',
         },
         onDelete: 'cascade',
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      nick: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      ilchonpyung: {
+      intro: {
         type: DataTypes.STRING,
         allowNull: true,
+        defaultValue: '',
+      },
+      today: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      total: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
     },
     {
       sequelize,
-      modelName: 'Ilchonpyungs',
+      modelName: 'Myhomes',
     }
   );
-  return Ilchonpyungs;
+  return Myhomes;
 };
