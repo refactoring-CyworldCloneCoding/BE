@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Users, { foreignKey: 'userId' });
+      this.belongsTo(models.Myhomes, { foreignKey: 'myhomeId' });
     }
   }
   Guestbooks.init(
@@ -20,7 +21,15 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true, // PRIMARY KEY, 기본키
         type: DataTypes.INTEGER,
       },
-      // 미니홈피 주인의 userId
+      myhomeId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Myhomes',
+          key: 'myhomeId',
+        },
+        onDelete: 'cascade',
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -29,16 +38,6 @@ module.exports = (sequelize, DataTypes) => {
           key: 'userId',
         },
         onDelete: 'cascade',
-      },
-      // 미니홈피 방문자의 userId
-      writerId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      // 미니홈피 방문자의 name
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
       },
       guestBook: {
         type: DataTypes.STRING,

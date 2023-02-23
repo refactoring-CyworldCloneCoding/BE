@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Comments extends Model {
+  class Diaries extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,11 +10,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Myhomes, { foreignKey: 'myhomeId' });
+      this.belongsTo(models.Users, { foreignKey: 'userId' });
     }
   }
-  Comments.init(
+  Diaries.init(
     {
-      commentId: {
+      diaryId: {
         allowNull: false, // NOT NULL, Null을 허용하지 않음
         autoIncrement: true, // AUTO_INCREMENT
         primaryKey: true, // PRIMARY KEY, 기본키
@@ -22,30 +23,35 @@ module.exports = (sequelize, DataTypes) => {
       },
       myhomeId: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: {
           model: 'Myhomes',
           key: 'myhomeId',
         },
         onDelete: 'cascade',
       },
-      diaryId: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'userId',
+        },
+        onDelete: 'cascade',
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      comment: {
+      content: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      dirImg: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
     },
     {
       sequelize,
-      modelName: 'Comments',
+      modelName: 'Diaries',
     }
   );
-  return Comments;
+  return Diaries;
 };

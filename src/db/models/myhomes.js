@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Diaries extends Model {
+  class Users extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -10,14 +10,31 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       this.belongsTo(models.Users, { foreignKey: 'userId' });
+      this.hasMany(models.Ilchonpyungs, {
+        as: 'Ilchonpyungs',
+        foreignKey: 'myhomeId',
+      });
+      this.hasMany(models.Diaries, {
+        as: 'Diaries',
+        foreignKey: 'myhomeId',
+      });
+      this.hasMany(models.Comments, {
+        as: 'Comments',
+        foreignKey: 'myhomeId',
+      });
+      this.hasMany(models.Guestbooks, {
+        as: 'Guestbooks',
+        foreignKey: 'myhomeId',
+      });
     }
   }
-  Diaries.init(
+  Myhomes.init(
     {
-      diaryId: {
+      myhomeId: {
         allowNull: false, // NOT NULL, Null을 허용하지 않음
         autoIncrement: true, // AUTO_INCREMENT
         primaryKey: true, // PRIMARY KEY, 기본키
+        unique: true,
         type: DataTypes.INTEGER,
       },
       userId: {
@@ -29,23 +46,26 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: 'cascade',
       },
-      name: {
+      intro: {
         type: DataTypes.STRING,
         allowNull: true,
+        defaultValue: '',
       },
-      content: {
-        type: DataTypes.STRING,
+      today: {
+        type: DataTypes.INTEGER,
         allowNull: false,
+        defaultValue: 0,
       },
-      dirImg: {
-        type: DataTypes.STRING,
-        allowNull: true,
+      total: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
     },
     {
       sequelize,
-      modelName: 'Diaries',
+      modelName: 'Myhomes',
     }
   );
-  return Diaries;
+  return Myhomes;
 };

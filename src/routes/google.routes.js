@@ -26,6 +26,7 @@ try{
         process.env.SECRET_KEY,
         {expiresIn:'21d'}
       );
+      console.log('111111111')
       await Users.update(
         {refreshToken},
         {where: {userId : user.userId}}

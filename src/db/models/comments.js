@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class MyHomeCounts extends Model {
+  class Comments extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,43 +9,55 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.Myhomes, { foreignKey: 'myhomeId' });
+      this.belongsTo(models.Diaries, { foreignKey: 'diaryId' });
       this.belongsTo(models.Users, { foreignKey: 'userId' });
     }
   }
-  MyHomeCounts.init(
+  Comments.init(
     {
-      id: {
+      commentId: {
         allowNull: false, // NOT NULL, Null을 허용하지 않음
         autoIncrement: true, // AUTO_INCREMENT
         primaryKey: true, // PRIMARY KEY, 기본키
         type: DataTypes.INTEGER,
       },
-      ip: {
-        type: DataTypes.STRING,
+      myhomeId: {
+        type: DataTypes.INTEGER,
         allowNull: true,
+        references: {
+          model: 'Myhomes',
+          key: 'myhomeId',
+        },
+        onDelete: 'cascade',
       },
-      // 미니홈피 주인의 userId
+      diaryId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Diaries',
+          key: 'diaryId',
+        },
+        onDelete: 'cascade',
+      },
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'userId',
+        },
+        onDelete: 'cascade',
       },
-      time: {
+      comment: {
         type: DataTypes.STRING,
-        allowNull: true,
-      },
-      createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
       },
     },
     {
       sequelize,
-      modelName: 'MyHomeCounts',
+      modelName: 'Comments',
     }
   );
-  return MyHomeCounts;
+  return Comments;
 };
