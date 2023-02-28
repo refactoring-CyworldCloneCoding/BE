@@ -57,6 +57,15 @@ class Env extends dBConnection {
   KEY_PRIVKEY: string;
   CERT_CERT: string;
 
+  AWS_ACCESS_KEY: string;
+  AWS_ACCESS_SECREY_KEY: string;
+  S3_STORAGE_URL: string;
+  S3_REGION: string;
+
+  KAKAO_ID: string;
+  GOOGLE_ID: string;
+  GOOGLE_SECRET: string;
+
   constructor() {
     super();
 
@@ -75,6 +84,15 @@ class Env extends dBConnection {
     this.CA_FULL_CHAIN = process.env.CA_FULL_CHAIN!;
     this.KEY_PRIVKEY = process.env.KEY_PRIVKEY!;
     this.CERT_CERT = process.env.CERT_CERT!;
+
+    this.AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY!;
+    this.AWS_ACCESS_SECREY_KEY = process.env.AWS_ACCESS_SECREY_KEY!;
+    this.S3_STORAGE_URL = process.env.S3_STORAGE_URL!;
+    this.S3_REGION = process.env.S3_REGION!;
+
+    this.KAKAO_ID = process.env.KAKAO_ID!;
+    this.GOOGLE_ID = process.env.GOOGLE_ID!;
+    this.GOOGLE_SECRET = process.env.GOOGLE_SECRET!;
   }
 }
 
