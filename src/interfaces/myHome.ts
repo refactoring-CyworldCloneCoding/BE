@@ -1,5 +1,5 @@
 interface TodayForm {
-  myhomeId?: number;
+  myhomeId: number;
   ip: string;
   time: string;
 }

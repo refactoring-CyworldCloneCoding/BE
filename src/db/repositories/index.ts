@@ -1,5 +1,5 @@
 import Users from './users';
-import Myhomes from './myhome';
+import Myhomes from './myhomes';
 import Diaries from './diaries';
 import Comments from './commensts';
 import Guestbooks from './guestbooks';

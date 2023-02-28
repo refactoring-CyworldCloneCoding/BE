@@ -1,4 +1,4 @@
-import { Users, MyhomeCounts, Coupons, Myhomes } from '../models';
+import { MyhomeCounts, Myhomes } from '../models';
 import { TodayForm } from '../../interfaces/myHome';
 
 class MyhomesRepositories extends Myhomes {
@@ -9,7 +9,7 @@ class MyhomesRepositories extends Myhomes {
     return await Myhomes.findByPk(myhomeId);
   };
 
-  todayTotalCheck = async ({ ip, myhomeId }: TodayForm) => {
+  todayTotalCheck = async (myhomeId: number, ip: string) => {
     return await MyhomeCounts.findOne({ where: { ip, myhomeId } });
   };
 

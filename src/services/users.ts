@@ -52,29 +52,27 @@ class UsersService {
     const time = Date.now();
 
     // 중복된 아이피가 있는지 검증하기위해 repository 요청
-    const existIp = await Myhomes.todayTotalCheck({
-      ip: ipAdress,
-      myhomeId,
-    });
+    const existIp = await Myhomes.todayTotalCheck(+myhomeId, ipAdress);
 
     // 중복된 아이피가 없으면 DB에 추가
     if (!existIp)
       return await Myhomes.createTodayTotal({
-        myhomeId,
+        myhomeId: +myhomeId,
         ip: ipAdress,
-        time,
+        time: time.toString(),
       });
     // 이전 조회수 업데이트 날짜와 현재 날짜가 다를경우 today는 1로 초기화, total +1
     // 구현되는 것을 확인하기 위해 1분마다 today 초기화
     const day = new Date() + '';
     const myhomeDay = existIp.updatedAt + '';
-    const intervalDay: boolean = parseInt(day.split(':')[1]) - parseInt(myhomeDay.split(':')[1]) === 0;
+    const intervalDay: boolean =
+      parseInt(day.split(':')[1]) - parseInt(myhomeDay.split(':')[1]) === 0;
 
     if (!intervalDay)
       return await Myhomes.newTodayTotal({
+        myhomeId: +myhomeId,
         ip: ipAdress,
-        time,
-        myhomeId,
+        time: time.toString(),
       });
 
     // 조회수를 무작정 올리는것을 방지하기 위한 5초 간격
@@ -83,15 +81,19 @@ class UsersService {
     // 조회수를 올린지 5초가 지났으면 조회수 요청 및 시간 업데이트 요청
     if (intervalCount)
       await Myhomes.todayTotalCount({
+        myhomeId: +myhomeId,
         ip: ipAdress,
         time: time.toString(),
-        myhomeId,
       });
   };
 
   myhome = async (req: Request) => {
     const { userId } = req.params;
     return await Users.findByUser(+userId);
+  };
+
+  findByMyhome = async (myhomeId: number) => {
+    return await Myhomes.findByMyhome(myhomeId);
   };
 
   introupdate = async (userId: number, intro: string) => {
