@@ -1,4 +1,4 @@
-const { Guestbooks, Users } = require('../models');
+import { Guestbooks, Users } from '../models';
 
 class GuestBooksRepository {
   constructor() {
@@ -40,4 +40,4 @@ class GuestBooksRepository {
   };
 }
 
-module.exports = GuestBooksRepository;
+export default new GuestBooksRepository();

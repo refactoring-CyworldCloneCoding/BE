@@ -1,12 +1,10 @@
-const DiaryRepository = require('../repositories/diaries.repositories');
-require('dotenv').config();
+import { Diaries } from '../db/repositories';
+import env from '../config.env';
 
 class DiaryService {
-  diaryService = new DiaryRepository();
-
   findAllDiary = async (userId) => {
     // 저장소에서 데이터요청
-    const allDiary = await this.diaryService.findAllDiary(userId);
+    const allDiary = await Diaries.findAllDiary(userId);
 
     for (let i = 0; i < allDiary.length; i++) {
       allDiary[i].dataValues.diaryNo = i + 1;
@@ -32,11 +30,11 @@ class DiaryService {
   };
 
   createDiary = async (userId, name, dirImg, content) => {
-    return await this.diaryService.createDiary(userId, name, dirImg, content);
+    return await Diaries.createDiary(userId, name, dirImg, content);
   };
 
   updateDiary = async (diaryId, dirImg, content) => {
-    const updateDiaryData = await this.diaryService.updateDiary(
+    const updateDiaryData = await Diaries.updateDiary(
       diaryId,
       // userId,
       dirImg,
@@ -55,9 +53,9 @@ class DiaryService {
   };
 
   deleteDiary = async (diaryId, userId) => {
-    const deleteDiaryData = await this.diaryService.deleteDiary(diaryId);
+    const deleteDiaryData = await Diaries.deleteDiary(diaryId);
     return deleteDiaryData;
   };
 }
 
-module.exports = DiaryService;
+export default new DiaryService();

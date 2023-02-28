@@ -1,47 +1,46 @@
-const GuestBooksService = require('../services/guestBooks.services');
+import { Request, Response, NextFunction } from 'express';
+import { GuestBooks } from '../../services';
 
 class GuestBooksController {
-  guestBooksService = new GuestBooksService();
-
   // 방명록 작성
-  createBook = async (req, res, next) => {
+  createBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.guestBooksService.createBook(req, res);
+      await GuestBooks.createBook(req, res);
       res.status(200).send({ msg: '방명록이 작성되었습니다.' });
     } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
+      res.status(400).send({ ok: false });
     }
   };
 
   // 방명록 목록 조회
-  getBooks = async (req, res, next) => {
+  getBooks = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.guestBooksService.getBooks(req, res);
+      const result = await GuestBooks.getBooks(req, res);
       res.status(200).json({ data: result });
     } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
+      res.status(400).send({ ok: false });
     }
   };
 
   // 방명록 수정
-  // updateBook = async (req, res, next) => {
+  // updateBook = async (req: Request, res: Response, next: NextFunction) => {
   //   try {
-  //     await this.guestBooksService.updateBook(req, res);
+  //     await GuestBooks.updateBook(req, res);
   //     res.status(200).send({ msg: '방명록이 수정되었습니다.' });
   //   } catch (error) {
-  //     res.status(error.status || 400).send({ ok: false, msg: error.message });
+  //     res.status(400).send({ ok: false });
   //   }
   // };
 
   // 방명록 삭제
-  deleteBook = async (req, res, next) => {
+  deleteBook = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.guestBooksService.deleteBook(req, res);
+      await GuestBooks.deleteBook(req, res);
       res.status(200).send({ msg: '방명록이 삭제되었습니다.' });
     } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
+      res.status(400).send({ ok: false });
     }
   };
 }
 
-module.exports = GuestBooksController;
+export default new GuestBooksController();

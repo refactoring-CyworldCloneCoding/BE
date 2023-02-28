@@ -1,41 +1,22 @@
-import Users from '../db/repositories/users'
-import jwt from 'jsonwebtoken';
+import { Request } from 'express';
+import { Myhomes, Users } from '../db/repositories';
+import jwt from '../utils/jwt';
 import bcrypt from 'bcrypt';
-import env from '../config.env';
+import { UserInfo } from '../interfaces/user';
 
 class UsersService {
-  createUser = async (users) => {
-    const { email, name, password, gender, birth } = users;
+  createUser = async (users: UserInfo) => {
+    users.email += '@cyworld.com';
 
-    // let isGender;
-
-    // if (gender === '남자') isGender = 'man';
-    // else isGender = 'lady';
-
-    await Users.createUser({
-      email: email + '@cyworld.com',
-      name: name,
-      password: password,
-      // gender: `https://qportminiprojectmini.s3.ap-northeast-2.amazonaws.com/sample/${isGender}.png`,
-      gender: gender,
-      birth: birth,
-    });
+    await Users.createUser(users);
   };
 
-  emailDuplicates = async (email) => {
-    return await Users.findOneEmail({
-      email: email + '@cyworld.com',
-    });
+  emailDuplicates = async (email: string) => {
+    return await Users.findOneEmail(email + '@cyworld.com');
   };
 
-  // duplicate = async (email) => {
-  //   return await Users.findOneEmail({
-  //     email: email + '@cyworld.com',
-  //   });
-  // };
-
-  userLogin = async (email, password) => {
-    const user = await Users.findOneEmail({ email });
+  userLogin = async (email: string, password: string) => {
+    const user = await Users.findOneEmail(email);
     if (!user) {
       throw new Error('가입하신 회원이 아닙니다.');
     }
@@ -44,104 +25,77 @@ class UsersService {
     if (!isEqual) {
       throw new Error('비밀번호가 다릅니다.');
     }
-    const accesstoken = jwt.sign(
-      { userId: user.userId },
-      env.SECRET_KEY,
-      { expiresIn: '1h' }
-    );
-    const refreshtoken = jwt.sign(
-      { userId: user.userId },
-      env.SECRET_KEY,
-      { expiresIn: '14d' }
-    );
-    await Users.updateRefresh(refreshtoken, user);
+    const accesstoken = jwt.sign({ userId: user.userId });
+    const refreshtoken = jwt.refresh();
+    // await Users.updateRefresh(refreshtoken, user);
     return { accesstoken, refreshtoken, userId: user.userId };
-  };
-
-  findOneId = async (userId) => {
-    const findOneId = await Users.findOneId(userId);
-    console.log('111111111', findOneId);
-    return {
-      userId: findOneId.userId,
-      email: findOneId.email,
-      name: findOneId.name,
-      gender: findOneId.gender,
-      birth: findOneId.birth,
-      intro: findOneId.intro,
-      today: findOneId.today,
-      total: findOneId.total,
-    };
   };
 
   surfing = async () => {
     const maxUserId = await Users.findMaxUser();
 
-    const random = Math.ceil(Math.random() * maxUserId.userId) + '';
+    const random = Math.ceil(Math.random() * maxUserId!.userId);
 
     return await Users.findByUser(random);
   };
 
-  todayTotal = async (req, res) => {
+  todayTotal = async (req: Request) => {
     // 현재 사용중인 유저의 ip를 가져온다.
-    const ipAdress = req.ip.split(':').pop();
+    const ipAdress: string = req.ip.split(':').pop()!;
 
-    const { userId } = req.params;
+    const { myhomeId } = req.params;
 
-    const findByUser = await Users.findByUser(userId);
+    const findByUser = await Myhomes.findByMyhome(+myhomeId);
 
     if (!findByUser) throw new Error('존재하지 않는 미니홈피 입니다.');
 
     const time = Date.now();
 
     // 중복된 아이피가 있는지 검증하기위해 repository 요청
-    const existIp = await Users.todayTotalCheck({
+    const existIp = await Myhomes.todayTotalCheck({
       ip: ipAdress,
-      userId,
+      myhomeId,
     });
 
     // 중복된 아이피가 없으면 DB에 추가
     if (!existIp)
-      return await Users.createTodayTotal({
-        userId,
+      return await Myhomes.createTodayTotal({
+        myhomeId,
         ip: ipAdress,
         time,
       });
     // 이전 조회수 업데이트 날짜와 현재 날짜가 다를경우 today는 1로 초기화, total +1
     // 구현되는 것을 확인하기 위해 1분마다 today 초기화
-    // const day = new Date() + '';
-    // const myhomeDay = existIp.updatedAt + '';
-    // const intervalDay = day.split(':')[1] - myhomeDay.split(':')[1] === 0;
+    const day = new Date() + '';
+    const myhomeDay = existIp.updatedAt + '';
+    const intervalDay: boolean = parseInt(day.split(':')[1]) - parseInt(myhomeDay.split(':')[1]) === 0;
 
-    // if (!intervalDay)
-    //   return await Users.newTodayTotal({
-    //     ip: ipAdress,
-    //     time,
-    //     userId,
-    //   });
+    if (!intervalDay)
+      return await Myhomes.newTodayTotal({
+        ip: ipAdress,
+        time,
+        myhomeId,
+      });
 
     // 조회수를 무작정 올리는것을 방지하기 위한 5초 간격
-    const intervalCount = time.toString() - existIp.time > 5000;
+    const intervalCount = time - parseInt(existIp.time) > 5000;
 
     // 조회수를 올린지 5초가 지났으면 조회수 요청 및 시간 업데이트 요청
     if (intervalCount)
-      await Users.todayTotalCount({
+      await Myhomes.todayTotalCount({
         ip: ipAdress,
-        time,
-        userId,
+        time: time.toString(),
+        myhomeId,
       });
   };
 
-  myhome = async (req, res) => {
+  myhome = async (req: Request) => {
     const { userId } = req.params;
-    return await Users.findByUser(userId);
+    return await Users.findByUser(+userId);
   };
 
-  introupdate = async (userId, intro) => {
-    const introupdate = await Users.introUpdate(userId, intro);
-    return {
-      userId: introupdate.userId,
-      intro: introupdate.intro,
-    };
+  introupdate = async (userId: number, intro: string) => {
+    await Myhomes.introUpdate(userId, intro);
   };
 
   //도토리

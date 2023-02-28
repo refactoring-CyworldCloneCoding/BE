@@ -1,15 +1,13 @@
-const CommentRepository = require('../repositories/commensts.repositories');
+import {Comments} from '../db/repositories'
 
 class CommentService {
-  commentService = new CommentRepository();
-
   findAllComment = async (userId) => {
-    const allComment = await this.commentService.findAllComment(userId);
+    const allComment = await Comments.findAllComment(userId);
     return allComment;
   };
 
   createComment = async (diaryId, userId, name, comment) => {
-    const createCommentData = await this.commentService.createComment(
+    const createCommentData = await Comments.createComment(
       diaryId,
       userId,
       name,
@@ -24,7 +22,7 @@ class CommentService {
   };
 
   updateComment = async (commentId, comment) => {
-    const updateCommentData = await this.commentService.updateComment(
+    const updateCommentData = await Comments.updateComment(
       commentId,
       comment
     );
@@ -32,7 +30,7 @@ class CommentService {
   };
 
   deleteComment = async (commentId, userId) => {
-    const deleteCommentData = await this.commentService.deleteComment(
+    const deleteCommentData = await Comments.deleteComment(
       commentId,
       userId
     );
@@ -40,8 +38,8 @@ class CommentService {
   };
 
   findByComment = async (commentId)=>{
-    return await this.commentService.findByComment(commentId)
+    return await Comments.findByComment(commentId)
   }
 }
 
-module.exports = CommentService;
+export default new CommentService();

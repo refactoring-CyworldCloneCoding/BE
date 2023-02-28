@@ -1,4 +1,4 @@
-const { Diaries } = require('../models');
+import { Diaries } from '../models';
 
 class DiaryRepository {
   findAllDiary = async (userId) => {
@@ -29,4 +29,4 @@ class DiaryRepository {
   };
 }
 
-module.exports = DiaryRepository;
+export default new DiaryRepository();

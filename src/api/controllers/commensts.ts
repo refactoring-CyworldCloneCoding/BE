@@ -1,21 +1,20 @@
-const CommentService = require('../services/commensts.services');
+import { Request, Response, NextFunction } from 'express';
+import { Comments } from '../../services';
 
 class CommentsController {
-  Comments = new CommentService();
-
-  getComment = async (req, res) => {
+  getComment = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
-    const comments = await this.Comments.findAllComment(userId);
+    const comments = await Comments.findAllComment(userId);
     res.status(200).json({ data: comments });
   };
 
-  createComment = async (req, res) => {
+  createComment = async (req: Request, res: Response, next: NextFunction) => {
     const { diaryId, userId } = req.params;
     const { name } = res.locals.user;
     console.log(name);
     const { comment } = req.body;
 
-    const createCommentData = await this.Comments.createComment(
+    const createCommentData = await Comments.createComment(
       diaryId,
       userId,
       name,
@@ -24,17 +23,17 @@ class CommentsController {
     res.status(200).json({ data: createCommentData });
   };
 
-  updataComment = async (req, res) => {
+  updataComment = async (req: Request, res: Response, next: NextFunction) => {
     const { commentId } = req.params;
     const { userId } = res.locals.user;
     const { comment } = req.body;
     try {
-      const isWriter = await this.Comments.findByComment(commentId);
+      const isWriter = await Comments.findByComment(commentId);
 
       if (userId !== isWriter.userId) {
         throw new Error('수정 권한이 없습니다.');
       }
-      const updateCommentData = await this.Comments.updateComment(
+      const updateCommentData = await Comments.updateComment(
         commentId,
         comment
       );
@@ -44,16 +43,16 @@ class CommentsController {
     }
   };
 
-  deleteComment = async (req, res) => {
+  deleteComment = async (req: Request, res: Response, next: NextFunction) => {
     const { commentId } = req.params;
     const { userId } = res.locals.user;
     try {
-      const isWriter = await this.Comments.findByComment(commentId);
+      const isWriter = await Comments.findByComment(commentId);
 
       if (userId !== isWriter.userId) {
         throw new Error('삭제 권한이 없습니다.');
       }
-      const deleteCommentData = await this.Comments.deleteComment(
+      const deleteCommentData = await Comments.deleteComment(
         commentId,
         userId
       );

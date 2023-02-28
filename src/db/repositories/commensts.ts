@@ -1,4 +1,4 @@
-const { Comments } = require('../models');
+import { Comments } from '../models';
 
 class CommentRepository {
   findAllComment = async (userId) => {
@@ -39,4 +39,5 @@ class CommentRepository {
     return await Comments.findByPk(commentId);
   };
 }
-module.exports = CommentRepository;
+
+export default new CommentRepository();

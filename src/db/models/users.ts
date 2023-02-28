@@ -19,9 +19,9 @@ class Users extends Model<
   declare gender: string;
   declare birth: string;
   // declare dotori: number;
-  declare snsId: string;
-  declare provider: string;
-  declare refreshToken: string;
+  // declare snsId: string;
+  // declare provider: string;
+  // declare refreshToken: string;
   declare createdAt: CreationOptional<number>;
   declare updatedAt: CreationOptional<number>;
 
@@ -71,28 +71,28 @@ Users.init(
     },
     gender: {
       type: DataTypes.STRING(20),
-      allowNull: true,
+      allowNull: false,
     },
     password: {
       type: DataTypes.STRING(100),
-      allowNull: true,
+      allowNull: false,
     },
     birth: {
       type: DataTypes.STRING(20),
-      allowNull: true,
-    },
-    snsId: {
-      type: DataTypes.STRING(100),
       allowNull: false,
     },
-    provider: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
-    refreshToken: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-    },
+    // snsId: {
+    //   type: DataTypes.STRING(100),
+    //   allowNull: false,
+    // },
+    // provider: {
+    //   type: DataTypes.STRING(100),
+    //   allowNull: false,
+    // },
+    // refreshToken: {
+    //   type: DataTypes.STRING(100),
+    //   allowNull: true,
+    // },
     // dotori: {
     //   type: DataTypes.INTEGER.UNSIGNED,
     //   allowNull: true,

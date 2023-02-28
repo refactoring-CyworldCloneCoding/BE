@@ -1,16 +1,15 @@
-const DiaryService = require('../services/diaries.services');
+import { Request, Response, NextFunction } from 'express';
+import { Diaries } from '../../services';
 
 class DiaryController {
-  diaryController = new DiaryService();
-
-  getDiary = async (req, res) => {
+  getDiary = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
-    const diaries = await this.diaryController.findAllDiary(userId);
+    const diaries = await Diaries.findAllDiary(userId);
 
     res.status(200).json({ data: diaries });
   };
 
-  createDiary = async (req, res) => {
+  createDiary = async (req: Request, res: Response, next: NextFunction) => {
     const { userId } = req.params;
     const { content } = req.body;
     const { name } = res.locals.user;
@@ -31,14 +30,14 @@ class DiaryController {
         ? process.env.S3_STORAGE_URL + imageFileName
         : null;
 
-      await this.diaryController.createDiary(userId, name, dirImg, content);
+      await Diaries.createDiary(userId, name, dirImg, content);
       res.status(200).json({ msg: '다이어리 작성완료!' });
     } catch (err) {
       res.status(400).json({ err: err.message });
     }
   };
 
-  updateDiary = async (req, res) => {
+  updateDiary = async (req: Request, res: Response, next: NextFunction) => {
     const { diaryId, userId } = req.params;
     const { content } = req.body;
     const userInfo = res.locals.user;
@@ -55,7 +54,7 @@ class DiaryController {
         throw new Error('수정 권한이 없습니다.');
       }
 
-      const updateDiaryData = await this.diaryController.updateDiary(
+      const updateDiaryData = await Diaries.updateDiary(
         diaryId,
         // userId,
         dirImg,
@@ -67,7 +66,7 @@ class DiaryController {
     }
   };
 
-  deleteDiary = async (req, res) => {
+  deleteDiary = async (req: Request, res: Response, next: NextFunction) => {
     const { diaryId } = req.params;
     const { userId } = req.params;
     const userInfo = res.locals.user;
@@ -77,7 +76,7 @@ class DiaryController {
       if (userInfo.userId !== Number(userId)) {
         throw new Error('삭제 권한이 없습니다.');
       }
-      const deleteDiaryData = await this.diaryController.deleteDiary(diaryId);
+      const deleteDiaryData = await Diaries.deleteDiary(diaryId);
       res.status(200).json({ msg: '삭제되었습니다!' });
     } catch (err) {
       res.status(400).json({ err: err.message });
@@ -85,4 +84,4 @@ class DiaryController {
   };
 }
 
-module.exports = DiaryController;
+export default new DiaryController();

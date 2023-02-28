@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import Users from '../../services/users';
+import {Users} from '../../services';
 import Joi from '../../utils/joi';
 import bcrypt from 'bcrypt';
+import { UserInfo } from '../../interfaces/user';
 
 class UsersController {
   signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
       const { email, name, password, confirm, gender, birth } =
         await Joi.signupSchema.validateAsync(req.body);
 
@@ -40,13 +40,13 @@ class UsersController {
       }
 
       const hashed = await bcrypt.hash(password, 10);
-      const users = await Object.create({
+      const users: UserInfo = {
         email: email,
         name: name,
         password: hashed,
         gender: gender,
         birth: birth,
-      });
+      };
 
       await Users.createUser(users);
       res.status(201).json({ msg: '회원가입에 성공하셨습니다.' });
@@ -109,8 +109,8 @@ class UsersController {
 
   myhome = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await Users.todayTotal(req, res);
-      const result = await Users.myhome(req, res);
+      await Users.todayTotal(req);
+      const result = await Users.myhome(req);
       res.status(200).send({ data: result });
     } catch (error) {
       res.status(400).send({ ok: false });
@@ -131,12 +131,10 @@ class UsersController {
     try {
       const { userId } = req.params;
       const { intro } = req.body;
-      console.log(intro);
-      const introupdate = await Users.introupdate(userId, intro);
-      console.log(introupdate);
+      await Users.introupdate(+userId, intro);
       res
         .status(200)
-        .json({ data: introupdate, msg: 'intro가 수정되었습니다' });
+        .json({msg: 'intro가 수정되었습니다' });
     } catch (error) {
       res.status(400).send({ ok: false });
       next(error);
