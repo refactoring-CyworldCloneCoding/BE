@@ -1,12 +1,10 @@
-import UsersService from '../services/users.mjs';
-import Joi from '../util/joi';
+import { Request, Response, NextFunction } from 'express';
+import Users from '../../services/users';
+import Joi from '../../utils/joi';
 import bcrypt from 'bcrypt';
 
 class UsersController {
-  usersService = new UsersService();
-
-  //회원가입
-  signup = async (req, res, next) => {
+  signup = async (req: Request, res: Response, next: NextFunction) => {
     try {
       console.log(req.body);
       const { email, name, password, confirm, gender, birth } =
@@ -26,7 +24,7 @@ class UsersController {
         });
       }
 
-      const emailcheck = await this.usersService.emailDuplicates(email);
+      const emailcheck = await Users.emailDuplicates(email);
       if (emailcheck) {
         return res.status(400).send({
           ok: false,
@@ -50,18 +48,19 @@ class UsersController {
         birth: birth,
       });
 
-      await this.usersService.createUser(users);
+      await Users.createUser(users);
       res.status(201).json({ msg: '회원가입에 성공하셨습니다.' });
     } catch (error) {
+      res.status(400).send({ ok: false });
       next(error);
     }
   };
   //로그인
-  login = async (req, res, next) => {
+  login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = await Joi.loginSchema.validateAsync(req.body);
-      console.log(req.body)
-      const user = await this.usersService.userLogin(email, password);
+      console.log(req.body);
+      const user = await Users.userLogin(email, password);
       res.cookie('accesstoken', user.accesstoken);
       res.cookie('refreshtoken', user.refreshtoken);
       res.status(200).json({
@@ -78,87 +77,91 @@ class UsersController {
       //   })
       //   .json({ msg: '로그인 되었습니다.' });
     } catch (error) {
+      res.status(400).send({ ok: false });
       next(error);
     }
   };
 
   //이메일 중복
-  emailCheck = async (req, res, next) => {
+  emailCheck = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email } = req.body;
-      const emailCheck = await this.usersService.emailDuplicates(email);
+      const emailCheck = await Users.emailDuplicates(email);
       if (emailCheck) {
         throw new Error('이미 등록된 사용자입니다.');
       }
       res.status(200).send({ msg: '사용가능한 이메일입니다.' });
     } catch (error) {
+      res.status(400).send({ ok: false });
       next(error);
     }
   };
 
-  surfing = async (req, res, next) => {
+  surfing = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.usersService.surfing();
-      res.status(200).send({ data: result.userId });
+      const result = await Users.surfing();
+      res.status(200).send({ data: result!.userId });
     } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
+      res.status(400).send({ ok: false });
+      next(error);
     }
   };
 
-  myhome = async (req, res, next) => {
+  myhome = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.usersService.todayTotal(req, res);
-      const result = await this.usersService.myhome(req, res);
+      await Users.todayTotal(req, res);
+      const result = await Users.myhome(req, res);
       res.status(200).send({ data: result });
     } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
+      res.status(400).send({ ok: false });
+      next(error);
     }
   };
 
-  // myhome = async (req, res, next) => {
+  // myhome = async (req: Request, res: Response, next: NextFunction) => {
   //   try {
   //     const { userId } = req.params;
-  //     const myhome = await this.usersService.findOneId(userId);
+  //     const myhome = await this.Users.findOneId(userId);
   //     res.status(200).json({ data: myhome });
   //   } catch (error) {
   //     next(error);
   //   }
   // };
-  intro = async (req, res, next) => {
+  intro = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.params;
       const { intro } = req.body;
       console.log(intro);
-      const introupdate = await this.usersService.introupdate(userId, intro);
+      const introupdate = await Users.introupdate(userId, intro);
       console.log(introupdate);
       res
         .status(200)
         .json({ data: introupdate, msg: 'intro가 수정되었습니다' });
     } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
+      res.status(400).send({ ok: false });
+      next(error);
     }
   };
-
 
   //도토리
-  chargeDotori = async (req, res, next) => {
-    try {
-      const price = await this.usersService.chargeDotori(req, res);
-      res.status(200).send({ msg: `도토리 ${price}개가 충전되었습니다.` });
-    } catch (error) {
-      res.status(error.status || 400).send({ ok: false, msg: error.message });
-    }
-  };
+  // chargeDotori = async (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     const price = await Users.chargeDotori(req, res);
+  //     res.status(200).send({ msg: `도토리 ${price}개가 충전되었습니다.` });
+  //   } catch (error) {
+  //     res.status(400).send({ ok: false });
+  //     next(error);
+  //   }
+  // };
 
-  chargeCoupons = (req, res, next) => {
-    try {
-      res.status(200).send({msg:`쿠폰으로 ${coupon}개가 충전되었습니다.`})
-    } catch (error) {
-      res
-        .status(error.status || 400)
-        .send({ ok: false, msg: error.message });
-    }
-  };
+  // chargeCoupons = (req: Request, res: Response, next: NextFunction) => {
+  //   try {
+  //     res.status(200).send({ msg: `쿠폰으로 ${coupon}개가 충전되었습니다.` });
+  //   } catch (error) {
+  //     res.status(400).send({ ok: false });
+  //     next(error);
+  //   }
+  // };
 }
 
-export default UsersController;
+export default new UsersController();

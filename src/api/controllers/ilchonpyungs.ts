@@ -1,4 +1,4 @@
-const IlchonpyungsService = require('../services/ilchonpyungs.services');
+const IlchonpyungsService = require('../../services/ilchonpyungs');
 
 class IlchonpyungsController {
   ilchonpyungsService = new IlchonpyungsService();

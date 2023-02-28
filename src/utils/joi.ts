@@ -1,9 +1,11 @@
-const Joi = require('joi');
+import Joi from 'joi';
+
 const birthRegEx =
   /^(19[0-9][0-9]|20\d{2})-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/;
 // const nameRegEx = /^([a-zA-Z|가-힣]).{1,5}$/
 const passwordRegEx = /^(?=.*[a-zA-Z])[0-9a-zA-Z!@#$%^&*]{8,20}$/;
-module.exports = {
+
+export default {
   signupSchema: Joi.object({
     email: Joi.string()
       // .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })

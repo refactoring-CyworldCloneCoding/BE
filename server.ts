@@ -1,11 +1,13 @@
 import fs from 'fs';
 import HTTPS from 'https';
-import { app } from './src/app';
+import App from './src/app';
 import env from './src/config.env';
+import sequelize from './src/db/config/connection';
+import associate from './src/db/config/associate';
 
 const port = env.PORT;
 
-if (process.env.NODE_ENV == 'production') {
+if (env.NODE_ENV == 'production') {
   try {
     const option = {
       ca: fs.readFileSync(env.CA_FULL_CHAIN),
@@ -13,7 +15,8 @@ if (process.env.NODE_ENV == 'production') {
       cert: fs.readFileSync(env.CERT_CERT),
     };
 
-    HTTPS.createServer(option, app).listen(port, () => {
+    HTTPS.createServer(option, App.app).listen(port, () => {
+      dbConnect();
       console.log('HTTPS 서버가 실행되었습니다. 포트 :: ' + port);
     });
   } catch (error) {
@@ -21,7 +24,25 @@ if (process.env.NODE_ENV == 'production') {
     console.log(error);
   }
 } else {
-  app.listen(port, () => {
+  App.app.listen(port, () => {
+    dbConnect();
     console.log('HTTP 서버가 실행되었습니다. 포트 :: ' + port);
   });
+}
+
+function dbConnect(){
+  if (env.NODE_ENV !== 'test') {
+    sequelize
+      .authenticate()
+      .then(() => {
+        associate();
+        console.log('DB CONNECTED');
+      })
+      .catch((error) => {
+        console.error(error);
+        console.log('DB CONNECTION FAIL');
+
+        process.exit(0);
+      });
+  }
 }

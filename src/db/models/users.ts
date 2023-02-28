@@ -21,6 +21,7 @@ class Users extends Model<
   // declare dotori: number;
   declare snsId: string;
   declare provider: string;
+  declare refreshToken: string;
   declare createdAt: CreationOptional<number>;
   declare updatedAt: CreationOptional<number>;
 
@@ -85,6 +86,10 @@ Users.init(
       allowNull: false,
     },
     provider: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    refreshToken: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },

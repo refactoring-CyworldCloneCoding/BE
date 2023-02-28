@@ -1,11 +1,9 @@
-import UsersRepositories from '../db/repositories/users.mjs'
+import Users from '../db/repositories/users'
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import env from '../config.env';
 
 class UsersService {
-  usersRepositories = new UsersRepositories();
-
   createUser = async (users) => {
     const { email, name, password, gender, birth } = users;
 
@@ -14,7 +12,7 @@ class UsersService {
     // if (gender === '남자') isGender = 'man';
     // else isGender = 'lady';
 
-    await this.usersRepositories.createUser({
+    await Users.createUser({
       email: email + '@cyworld.com',
       name: name,
       password: password,
@@ -25,19 +23,19 @@ class UsersService {
   };
 
   emailDuplicates = async (email) => {
-    return await this.usersRepositories.findOneEmail({
+    return await Users.findOneEmail({
       email: email + '@cyworld.com',
     });
   };
 
   // duplicate = async (email) => {
-  //   return await this.usersRepositories.findOneEmail({
+  //   return await Users.findOneEmail({
   //     email: email + '@cyworld.com',
   //   });
   // };
 
   userLogin = async (email, password) => {
-    const user = await this.usersRepositories.findOneEmail({ email });
+    const user = await Users.findOneEmail({ email });
     if (!user) {
       throw new Error('가입하신 회원이 아닙니다.');
     }
@@ -56,12 +54,12 @@ class UsersService {
       env.SECRET_KEY,
       { expiresIn: '14d' }
     );
-    await this.usersRepositories.updateRefresh(refreshtoken, user);
+    await Users.updateRefresh(refreshtoken, user);
     return { accesstoken, refreshtoken, userId: user.userId };
   };
 
   findOneId = async (userId) => {
-    const findOneId = await this.usersRepositories.findOneId(userId);
+    const findOneId = await Users.findOneId(userId);
     console.log('111111111', findOneId);
     return {
       userId: findOneId.userId,
@@ -76,34 +74,34 @@ class UsersService {
   };
 
   surfing = async () => {
-    const maxUserId = await this.usersRepositories.findMaxUser();
+    const maxUserId = await Users.findMaxUser();
 
     const random = Math.ceil(Math.random() * maxUserId.userId) + '';
 
-    return await this.usersRepositories.findByUser(random);
+    return await Users.findByUser(random);
   };
 
-  todayTotal = async (req, res, next) => {
+  todayTotal = async (req, res) => {
     // 현재 사용중인 유저의 ip를 가져온다.
     const ipAdress = req.ip.split(':').pop();
 
     const { userId } = req.params;
 
-    const findByUser = await this.usersRepositories.findByUser(userId);
+    const findByUser = await Users.findByUser(userId);
 
     if (!findByUser) throw new Error('존재하지 않는 미니홈피 입니다.');
 
     const time = Date.now();
 
     // 중복된 아이피가 있는지 검증하기위해 repository 요청
-    const existIp = await this.usersRepositories.todayTotalCheck({
+    const existIp = await Users.todayTotalCheck({
       ip: ipAdress,
       userId,
     });
 
     // 중복된 아이피가 없으면 DB에 추가
     if (!existIp)
-      return await this.usersRepositories.createTodayTotal({
+      return await Users.createTodayTotal({
         userId,
         ip: ipAdress,
         time,
@@ -115,7 +113,7 @@ class UsersService {
     // const intervalDay = day.split(':')[1] - myhomeDay.split(':')[1] === 0;
 
     // if (!intervalDay)
-    //   return await this.usersRepositories.newTodayTotal({
+    //   return await Users.newTodayTotal({
     //     ip: ipAdress,
     //     time,
     //     userId,
@@ -126,20 +124,20 @@ class UsersService {
 
     // 조회수를 올린지 5초가 지났으면 조회수 요청 및 시간 업데이트 요청
     if (intervalCount)
-      await this.usersRepositories.todayTotalCount({
+      await Users.todayTotalCount({
         ip: ipAdress,
         time,
         userId,
       });
   };
 
-  myhome = async (req, res, next) => {
+  myhome = async (req, res) => {
     const { userId } = req.params;
-    return await this.usersRepositories.findByUser(userId);
+    return await Users.findByUser(userId);
   };
 
   introupdate = async (userId, intro) => {
-    const introupdate = await this.usersRepositories.introUpdate(userId, intro);
+    const introupdate = await Users.introUpdate(userId, intro);
     return {
       userId: introupdate.userId,
       intro: introupdate.intro,
@@ -167,19 +165,19 @@ class UsersService {
   //   if (!coupon && price) {
   //     if (price < 100) throw new Error('100원 이상부터 충전 가능합니다.');
   //     if (price % 100 !== 0) throw new Error('100원단위로 충전 가능합니다.');
-  //     await this.usersRepositories.chargeDotori(userId, +price / 100);
+  //     await Users.chargeDotori(userId, +price / 100);
   //   }
 
   //   // 쿠폰 입력시 해당하는 도토리 비율만큼 충전
   //   if (coupon && !price) {
   //     // 유효하지 않거나 사용된 쿠폰인지 확인
-  //     const getCoupon = await this.usersRepositories.findCoupon(coupon);
+  //     const getCoupon = await Users.findCoupon(coupon);
   //     if (!getCoupon) throw new Error('없는 쿠폰입니다.');
   //     if (getCoupon.status === 'x') throw new Error('이미 사용된 쿠폰입니다.');
 
   //     // 도토리 충전 및 쿠폰 사용처리
-  //     await this.usersRepositories.chargeDotori(userId, getCoupon.price);
-  //     await this.usersRepositories.afterCoupon(getCoupon.couponId);
+  //     await Users.chargeDotori(userId, getCoupon.price);
+  //     await Users.afterCoupon(getCoupon.couponId);
   //   }
 
   //   return price / 100;
@@ -187,7 +185,7 @@ class UsersService {
 
   // chargeCoupons = async (req, res, next) => {
   //   const { boop } = req.body;
-  //   await this.usersRepositories.chargeCoupons();
+  //   await Users.chargeCoupons();
   // };
 }
-export default UsersService;
+export default new UsersService();

@@ -1,11 +1,11 @@
 const CommentService = require('../services/commensts.services');
 
-class CommentController {
-  commentController = new CommentService();
+class CommentsController {
+  Comments = new CommentService();
 
   getComment = async (req, res) => {
     const { userId } = req.params;
-    const comments = await this.commentController.findAllComment(userId);
+    const comments = await this.Comments.findAllComment(userId);
     res.status(200).json({ data: comments });
   };
 
@@ -15,7 +15,7 @@ class CommentController {
     console.log(name);
     const { comment } = req.body;
 
-    const createCommentData = await this.commentController.createComment(
+    const createCommentData = await this.Comments.createComment(
       diaryId,
       userId,
       name,
@@ -29,12 +29,12 @@ class CommentController {
     const { userId } = res.locals.user;
     const { comment } = req.body;
     try {
-      const isWriter = await this.commentController.findByComment(commentId);
+      const isWriter = await this.Comments.findByComment(commentId);
 
       if (userId !== isWriter.userId) {
         throw new Error('수정 권한이 없습니다.');
       }
-      const updateCommentData = await this.commentController.updateComment(
+      const updateCommentData = await this.Comments.updateComment(
         commentId,
         comment
       );
@@ -48,12 +48,12 @@ class CommentController {
     const { commentId } = req.params;
     const { userId } = res.locals.user;
     try {
-      const isWriter = await this.commentController.findByComment(commentId);
+      const isWriter = await this.Comments.findByComment(commentId);
 
       if (userId !== isWriter.userId) {
         throw new Error('삭제 권한이 없습니다.');
       }
-      const deleteCommentData = await this.commentController.deleteComment(
+      const deleteCommentData = await this.Comments.deleteComment(
         commentId,
         userId
       );
@@ -64,4 +64,4 @@ class CommentController {
   };
 }
 
-module.exports = CommentController;
+export default new CommentsController();

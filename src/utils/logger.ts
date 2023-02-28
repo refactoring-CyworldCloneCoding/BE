@@ -1,8 +1,8 @@
-const { createLogger, format, transports } = require("winston");
-const winstonDaily = require("winston-daily-rotate-file");
-require("dotenv").config();
+import { createLogger, format, transports } from "winston";
+import winstonDaily from "winston-daily-rotate-file";
+import env from '../config.env'
 
-const logDir = process.env.LOGDIR;
+const logDir = env.LOGDIR;
 const colorizer = format.colorize();
 
 const logger = createLogger({
@@ -38,7 +38,7 @@ const logger = createLogger({
 
 // morgan이랑 결합해서 사용
 const stream = {
-  write: (message) => {
+  write: (message: any) => {
     const status = Number(message.split(" ")[8]);
     if (status < 400) {
       logger.info(message); //level info
@@ -53,9 +53,9 @@ const stream = {
 // 콘솔에 표시
 logger.add(
   new transports.Console({
-    level: process.env.NODE_ENV === "production" ? "warn" : "info",
+    level: env.NODE_ENV === "production" ? "warn" : "info",
     format: format.combine(format.colorize(), format.simple()),
   })
 );
 
-module.exports = { logger, stream };
+export default { logger, stream };

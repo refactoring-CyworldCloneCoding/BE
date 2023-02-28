@@ -1,4 +1,4 @@
-const IlchonpyungsRepository = require('../repositories/ilchonpyungs.repositories');
+const IlchonpyungsRepository = require('../db/repositories/ilchonpyungs');
 
 class IlchonpyungsService {
   ilchonpyungsRepository = new IlchonpyungsRepository();

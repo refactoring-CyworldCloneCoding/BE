@@ -16,7 +16,7 @@ class Diaries extends Model<
   declare userId: number;
   declare myhomeId: number;
   declare content: string;
-  declare dirImg: number;
+  declare dirImg: string;
   declare createdAt: CreationOptional<number>;
   declare updatedAt: CreationOptional<number>;
 

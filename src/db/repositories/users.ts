@@ -99,4 +99,4 @@ class UsersRepositories {
   // chargeCoupons = async () => {};
 }
 
-export default UsersRepositories;
+export default new UsersRepositories();
