@@ -39,8 +39,11 @@ jobs:
         run: |
           npm install
 
+      - name: Run build
+        run: npm run build
+
       - name: zip file
-        run: zip -r cicdtest.zip ./src ./scripts ./appspec.yml ./.env ./package.json
+        run: zip -r cicdtest.zip ./build ./scripts ./appspec.yml ./.env ./package.json
 
       - name: AWS connect
         uses: aws-actions/configure-aws-credentials@v1
@@ -50,11 +53,11 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./cicdtest.zip s3://build-bucket/public/
+        run: aws s3 cp --region ap-northeast-2 ./cicdtest.zip s3://cyworld-refac/build/
 
       - name: deploy with AWS codeDeploy
         run: aws deploy create-deployment
-          --application-name Cyworld
+          --application-name cyworld-codedeploy
           --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name Cyworld
+          --deployment-group-name GROUP
           --s3-location bucket=build-bucket,bundleType=zip,key=public/cicdtest.zip
