@@ -6,8 +6,8 @@ import ilchonpyungsRouter from './ilchonpyungs';
 import diariesRouter from './diaries';
 import commentsRouter from './comments';
 import guestBooksRouter from './guestbooks';
-import kakaoRouter from './kakao';
-import googleRouter from './google';
+// import kakaoRouter from './kakao';
+// import googleRouter from './google';
 
 const router = Router();
 
@@ -19,7 +19,7 @@ router.use('/diaries', diariesRouter);
 router.use('/diaries/comments', commentsRouter);
 router.use('/guestbooks', guestBooksRouter);
 
-router.use('/', kakaoRouter);
-router.use('/', googleRouter);
+// router.use('/', kakaoRouter);
+// router.use('/', googleRouter);
 
 export default router;

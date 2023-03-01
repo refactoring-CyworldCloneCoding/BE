@@ -1,37 +1,37 @@
-import { Ilchonpyungs, Users } from '../models';
+import { Ilchonpyungs } from '../models';
 
 class IlchonpyungsRepository {
-  createBest = async (best) => {
-    await Ilchonpyungs.create(best);
+  createBest = async (CreateForm: CreateIlchonpyungForm) => {
+    await Ilchonpyungs.create(CreateForm);
   };
 
-  findByWriter = async (userId, writerId) => {
+  findByWriter = async (userId: number, myhomeId: number) => {
     return await Ilchonpyungs.findOne({
-      where: { userId, writerId },
+      where: { userId, myhomeId },
     });
   };
 
   // 일촌평 목록 조회 시 ilchonpyungId 기준 내림차순 조회
-  getBests = async (userId) => {
+  getBests = async (myhomeId: number) => {
     return await Ilchonpyungs.findAll({
-      where: { userId },
+      where: { myhomeId },
       order: [['ilchonpyungId', 'desc']],
     });
   };
 
-  findByBest = async (ilchonpyungId) => {
+  findByBest = async (ilchonpyungId: number) => {
     return await Ilchonpyungs.findByPk(ilchonpyungId);
   };
 
-  deleteBest = async (userId, ilchonpyungId) => {
+  deleteBest = async (userId: number, ilchonpyungId: number) => {
     await await Ilchonpyungs.destroy({
       where: { userId, ilchonpyungId },
     });
   };
 
-  findByUser = async (userId) => {
-    return await Users.findByPk(userId);
-  };
+  // findByUser = async (myhomeId: number) => {
+  //   return await Myhomes.findByPk(myhomeId);
+  // };
 }
 
 export default new IlchonpyungsRepository();

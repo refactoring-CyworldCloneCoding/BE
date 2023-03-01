@@ -5,7 +5,6 @@ class IlchonpyungsController {
   // 일촌평 작성
   createBest = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.body);
       await Ilchonpyungs.createBest(req, res);
       res.status(200).send({ msg: '일촌평이 작성되었습니다.' });
     } catch (error) {
