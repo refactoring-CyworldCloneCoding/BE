@@ -29,14 +29,14 @@ class Ilchonpyungs extends Model<
 Ilchonpyungs.init(
   {
     ilchonpyungId: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
       unique: true,
-      type: DataTypes.INTEGER,
     },
     myhomeId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Myhomes',
@@ -45,7 +45,7 @@ Ilchonpyungs.init(
       onDelete: 'cascade',
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Users',
@@ -54,11 +54,11 @@ Ilchonpyungs.init(
       onDelete: 'cascade',
     },
     nick: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(20),
       allowNull: false,
     },
     ilchonpyung: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     createdAt: {

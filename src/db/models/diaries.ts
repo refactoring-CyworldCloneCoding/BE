@@ -34,14 +34,14 @@ class Diaries extends Model<
 Diaries.init(
   {
     diaryId: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
       unique: true,
-      type: DataTypes.INTEGER,
     },
     myhomeId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Myhomes',
@@ -50,7 +50,7 @@ Diaries.init(
       onDelete: 'cascade',
     },
     // userId: {
-    //   type: DataTypes.INTEGER,
+    // type: DataTypes.INTEGER.UNSIGNED,
     //   allowNull: false,
     //   references: {
     //     model: 'Users',
@@ -59,15 +59,15 @@ Diaries.init(
     //   onDelete: 'cascade',
     // },
     diaryNo: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
     content: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     dirImg: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: true,
     },
     createdAt: {

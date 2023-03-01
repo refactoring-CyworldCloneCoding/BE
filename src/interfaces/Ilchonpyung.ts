@@ -5,3 +5,5 @@ interface CreateIlchonpyungForm {
   name: string;
   ilchonpyung: string;
 }
+
+export { CreateIlchonpyungForm };

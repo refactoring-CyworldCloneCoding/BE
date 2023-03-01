@@ -57,8 +57,10 @@ Users.init(
   {
     userId: {
       type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
+      allowNull: false, // NOT NULL, Null을 허용하지 않음
+      autoIncrement: true, // AUTO_INCREMENT
+      primaryKey: true, // PRIMARY KEY, 기본키
+      unique: true,
     },
     email: {
       type: DataTypes.STRING(20),

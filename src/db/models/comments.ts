@@ -31,14 +31,14 @@ class Comments extends Model<
 Comments.init(
   {
     commentId: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
       unique: true,
-      type: DataTypes.INTEGER,
     },
     myhomeId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Myhomes',
@@ -47,7 +47,7 @@ Comments.init(
       onDelete: 'cascade',
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Users',
@@ -56,7 +56,7 @@ Comments.init(
       onDelete: 'cascade',
     },
     diaryId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Diaries',
@@ -65,11 +65,11 @@ Comments.init(
       onDelete: 'cascade',
     },
     name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(20),
       allowNull: false,
     },
     comment: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     createdAt: {

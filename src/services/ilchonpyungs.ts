@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Ilchonpyungs, Myhomes } from '../db/repositories';
+import { CreateIlchonpyungForm } from '../interfaces/Ilchonpyung';
 
 class IlchonpyungsService {
   // 일촌평 작성

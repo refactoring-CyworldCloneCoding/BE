@@ -30,14 +30,14 @@ class Guestbooks extends Model<
 Guestbooks.init(
   {
     guestbookId: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
       unique: true,
-      type: DataTypes.INTEGER,
     },
     myhomeId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Myhomes',
@@ -46,7 +46,7 @@ Guestbooks.init(
       onDelete: 'cascade',
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Users',
@@ -55,15 +55,15 @@ Guestbooks.init(
       onDelete: 'cascade',
     },
     guestBookNum: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
     guestBook: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     bookImage: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     createdAt: {

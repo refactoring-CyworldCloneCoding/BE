@@ -6,11 +6,18 @@ import {
   InferCreationAttributes,
 } from 'sequelize';
 import sequelize from '../config/connection';
-import { Users, Ilchonpyungs, Diaries, Comments, Guestbooks } from '.';
+import {
+  Users,
+  Ilchonpyungs,
+  Diaries,
+  Comments,
+  Guestbooks,
+  MyhomeCounts,
+} from '.';
 
-class Myhoms extends Model<
-  InferAttributes<Myhoms>,
-  InferCreationAttributes<Myhoms>
+class Myhomes extends Model<
+  InferAttributes<Myhomes>,
+  InferCreationAttributes<Myhomes>
 > {
   declare myhomeId: CreationOptional<number>;
   declare userId: number;
@@ -38,20 +45,24 @@ class Myhoms extends Model<
       sourceKey: 'myhomeId',
       foreignKey: 'myhomeId',
     });
+    this.hasMany(MyhomeCounts, {
+      sourceKey: 'myhomeId',
+      foreignKey: 'myhomeId',
+    });
   }
 }
 
-Myhoms.init(
+Myhomes.init(
   {
     myhomeId: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
       unique: true,
-      type: DataTypes.INTEGER,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Users',
@@ -60,17 +71,17 @@ Myhoms.init(
       onDelete: 'cascade',
     },
     intro: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(20),
       allowNull: true,
       defaultValue: '',
     },
     today: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       defaultValue: 0,
     },
     total: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       defaultValue: 0,
     },
@@ -85,8 +96,8 @@ Myhoms.init(
   },
   {
     sequelize,
-    modelName: 'Myhoms',
+    modelName: 'Myhomes',
   }
 );
 
-export default Myhoms;
+export default Myhomes;

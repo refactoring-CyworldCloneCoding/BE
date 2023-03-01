@@ -1,4 +1,5 @@
 import { Ilchonpyungs } from '../models';
+import { CreateIlchonpyungForm } from '../../interfaces/Ilchonpyung';
 
 class IlchonpyungsRepository {
   createBest = async (CreateForm: CreateIlchonpyungForm) => {

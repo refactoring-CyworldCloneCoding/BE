@@ -27,10 +27,10 @@ class dBConnection {
       production: 'PRD',
     };
 
-    this.DB_HOST = process.env[`${DB[this.NODE_ENV]}_HOST`]!;
-    this.DB_NAME = process.env[`${DB[this.NODE_ENV]}_NAME`]!;
-    this.DB_USER = process.env[`${DB[this.NODE_ENV]}_USER`]!;
-    this.DB_PASSWORD = process.env[`${DB[this.NODE_ENV]}_PASSWORD`]!;
+    this.DB_HOST = process.env[`DB_${DB[this.NODE_ENV]}_HOST`]!;
+    this.DB_NAME = process.env[`DB_${DB[this.NODE_ENV]}_NAME`]!;
+    this.DB_USER = process.env[`DB_${DB[this.NODE_ENV]}_USER`]!;
+    this.DB_PASSWORD = process.env[`DB_${DB[this.NODE_ENV]}_PASSWORD`]!;
 
     const REDIS_HOST = process.env[`REDIS_${DB[this.NODE_ENV]}_HOST`]!;
     const REDIS_USER = process.env[`REDIS_${DB[this.NODE_ENV]}_USER`]!;

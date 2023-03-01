@@ -24,24 +24,25 @@ class Coupons extends Model<
 Coupons.init(
   {
     couponId: {
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false, // NOT NULL, Null을 허용하지 않음
+      autoIncrement: true, // AUTO_INCREMENT
+      primaryKey: true, // PRIMARY KEY, 기본키
+      unique: true,
     },
     // 쿠폰 번호
     couponNum: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
     // 쿠폰 금액
     price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
     },
     // 쿠폰 미사용 여부
     status: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(20),
       allowNull: false,
       defaultValue: 'o',
     },

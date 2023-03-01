@@ -8,9 +8,9 @@ import {
 import sequelize from '../config/connection';
 import { Myhomes } from '.';
 
-class MyHomeCounts extends Model<
-  InferAttributes<MyHomeCounts>,
-  InferCreationAttributes<MyHomeCounts>
+class MyhomeCounts extends Model<
+  InferAttributes<MyhomeCounts>,
+  InferCreationAttributes<MyhomeCounts>
 > {
   declare id: CreationOptional<number>;
   declare ip: string;
@@ -24,20 +24,21 @@ class MyHomeCounts extends Model<
   }
 }
 
-MyHomeCounts.init(
+MyhomeCounts.init(
   {
     id: {
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
-      type: DataTypes.INTEGER,
+      unique: true,
     },
     ip: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.STRING(20),
+      allowNull: false,
     },
     myhomeId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
         model: 'Myhomes',
@@ -46,8 +47,8 @@ MyHomeCounts.init(
       onDelete: 'cascade',
     },
     time: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.STRING(20),
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.INTEGER,
@@ -60,8 +61,8 @@ MyHomeCounts.init(
   },
   {
     sequelize,
-    modelName: 'MyHomeCounts',
+    modelName: 'MyhomeCounts',
   }
 );
 
-export default MyHomeCounts;
+export default MyhomeCounts;
