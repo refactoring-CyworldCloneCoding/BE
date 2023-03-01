@@ -4,9 +4,9 @@ import auth from '../../middlewares/auth';
 
 const router = Router();
 
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
-        res.status(200).send('SUCCESE')
+        res.status(200).send('USERS ROUTE SUCCESE')
     } catch (error) {
         next(error)
     }

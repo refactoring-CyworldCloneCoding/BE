@@ -2,27 +2,34 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 
+interface TokenInfo {
+  accesstoken: string;
+  refreshtoken: string;
+}
+
 export default {
   authMiddleware: (req: Request, res: Response, next: NextFunction) => {
     const invalidError = new Error('로그인이 필요한 기능입니다.');
 
     try {
-      const { Authorization, refreshToken } = req.headers;
+      const { accesstoken, refreshtoken } = req.headers;
+      // const { accesstoken, refreshtoken }: TokenInfo = req.cookies;
+      if (!accesstoken || !refreshtoken) throw invalidError;
       if (
-        Authorization === undefined ||
-        Authorization !== 'string' ||
-        typeof refreshToken !== 'string'
+        accesstoken === undefined ||
+        typeof accesstoken !== 'string' ||
+        typeof refreshtoken !== 'string'
       )
         throw invalidError;
 
-      const [tokenType, accessToken] = Authorization.split(' ');
+      const [tokenType, accessToken] = accesstoken.split(' ');
       if (tokenType !== 'Bearer') throw invalidError;
 
       const payload: JwtPayload | string | null = jwt.verify(accessToken);
       if (payload === null) {
         console.log('INVALID ACCESSTOKEN');
 
-        const refreshCheck = jwt.refreshVerify(refreshToken);
+        const refreshCheck = jwt.refreshVerify(refreshtoken);
         if (refreshCheck === null) throw invalidError;
 
         const payload: JwtPayload = req.session.cookie!;
@@ -31,15 +38,15 @@ export default {
         req.app.locals.user = payload;
         const newAccessToken = jwt.sign(payload);
 
-        res.set('Authorization', 'Bearer ' + newAccessToken);
+        res.set('accesstoken', 'Bearer ' + newAccessToken);
         return next();
       } else {
         req.app.locals.user = payload;
-        res.set('Authorization', 'Bearer ' + accessToken);
+        res.set('accesstoken', 'Bearer ' + accessToken);
         return next();
       }
     } catch (error: any) {
-      res.statusCode = 401;
+      res.statusCode = 400;
       res.json({
         message: error.message,
       });
@@ -48,9 +55,10 @@ export default {
 
   tokenChecker: (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { Authorization, refreshToken } = req.headers;
+      const { accesstoken, refreshtoken } = req.headers;
+      // const { accesstoken, refreshtoken } = req.cookies;
 
-      if (Authorization && refreshToken) {
+      if (accesstoken && refreshtoken) {
         const error = new Error('이미 로그인이 되어있습니다.');
         return res.status(400).json({
           message: error.message,
