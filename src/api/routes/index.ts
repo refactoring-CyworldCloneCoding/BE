@@ -5,7 +5,7 @@ import usersRouter from './users';
 import ilchonpyungsRouter from './ilchonpyungs';
 import diariesRouter from './diaries';
 import commentsRouter from './comments';
-import guestBooksRouter from './guestbooks';
+import guestBooksRouter from './guestBooks';
 // import kakaoRouter from './kakao';
 // import googleRouter from './google';
 
