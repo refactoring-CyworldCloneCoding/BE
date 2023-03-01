@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import error from './middlewares/errorhandlers';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import env from './config.env';
 import router from './api/routes/index';
 
@@ -23,7 +24,7 @@ class App {
     this.app.use(express.json());
     this.app.use(cookieParser());
     this.app.use(helmet());
-    this.app.use(error.handler, error.logger);
+    this.app.use(error.logger, error.handler);
     this.app.use(
       session({
         resave: true,
@@ -45,16 +46,22 @@ class App {
       });
       next();
     });
+    this.app.use(
+      cors({
+        origin: 'http://localhost:3000',
+        credentials: true,
+      })
+    );
   }
 
   public router() {
     this.app.use('/', router);
 
-    this.app.use((req, res, next) => {
-      const error = new Error('PAGE NOT FOUND');
-      // res.status(404).send(error.message);
-      res.status(404).json({ message: error.message });
-    });
+    // this.app.use((req, res, next) => {
+    //   const error = new Error('PAGE NOT FOUND');
+    //   // res.status(404).send(error.message);
+    //   res.status(404).json({ message: error.message });
+    // });
   }
 
   public testUrl() {
