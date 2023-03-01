@@ -78,4 +78,4 @@ jobs:
           --application-name cyworld-codedeploy
           --deployment-config-name CodeDeployDefault.OneAtATime
           --deployment-group-name GROUP
-          --s3-location bucket=cyworld-refac,bundleType=zip,key=public/cicdtest.zip
+          --s3-location bucket=cyworld-refac,bundleType=zip,key=build/cicdtest.zip
