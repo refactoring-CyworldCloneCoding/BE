@@ -2,9 +2,9 @@ name: cyworld_refac_backend
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: ['dev']
   pull_request:
-    branches: [ "dev" ]
+    branches: ['dev']
 
 jobs:
   buildAndTest:
@@ -13,10 +13,10 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-	
+
     steps:
       - uses: actions/checkout@v3
-	
+
       # Initialize Node.js
       - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
