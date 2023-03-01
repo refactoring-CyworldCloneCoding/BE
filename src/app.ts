@@ -39,7 +39,7 @@ class App {
       res.set({
         'Access-Control-Allow-Origin': req.headers.origin,
         'Access-Control-Allow-Headers': 'XMLHttpRequest,Content-Type',
-        'Access-Control-Allow-Methods': 'POST,GET',
+        'Access-Control-Allow-Methods': 'POST,GET,PUT,DELETE',
         'Access-Control-Allow-Credentials': true,
         'Access-Control-Allow-Private-Network': true,
       });

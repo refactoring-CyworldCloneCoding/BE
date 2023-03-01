@@ -1,45 +1,29 @@
 import {Comments} from '../db/repositories'
+import { CreateCommentsForm } from '../interfaces/comment';
 
 class CommentService {
-  findAllComment = async (userId) => {
-    const allComment = await Comments.findAllComment(userId);
+  findAllComment = async (myhomeId: number) => {
+    const allComment = await Comments.findAllComment(myhomeId);
     return allComment;
   };
 
-  createComment = async (diaryId, userId, name, comment) => {
-    const createCommentData = await Comments.createComment(
-      diaryId,
-      userId,
-      name,
-      comment
-    );
-    return {
-      diaryId: createCommentData.diaryId,
-      userId: createCommentData.userId,
-      name: createCommentData.name,
-      comment: createCommentData.comment,
-    };
+  createComment = async (createForm: CreateCommentsForm) => {
+    await Comments.createComment(createForm);
   };
 
-  updateComment = async (commentId, comment) => {
-    const updateCommentData = await Comments.updateComment(
-      commentId,
-      comment
-    );
+  updateComment = async (commentId: number, comment: string) => {
+    const updateCommentData = await Comments.updateComment(commentId, comment);
     return updateCommentData;
   };
 
-  deleteComment = async (commentId, userId) => {
-    const deleteCommentData = await Comments.deleteComment(
-      commentId,
-      userId
-    );
+  deleteComment = async (commentId: number, userId: number) => {
+    const deleteCommentData = await Comments.deleteComment(commentId, userId);
     return deleteCommentData;
   };
 
-  findByComment = async (commentId)=>{
-    return await Comments.findByComment(commentId)
-  }
+  findByComment = async (commentId: number) => {
+    return await Comments.findByComment(commentId);
+  };
 }
 
 export default new CommentService();

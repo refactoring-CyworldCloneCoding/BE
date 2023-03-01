@@ -1,41 +1,35 @@
+import { CreateCommentsForm } from '../../interfaces/comment';
 import { Comments } from '../models';
 
 class CommentRepository {
-  findAllComment = async (userId) => {
+  findAllComment = async (myhomeId: number) => {
     const comments = Comments.findAll(
-      { where: { userId } },
-      { order: [['createdAt', 'DESC']] }
+      { where: { myhomeId } }
+      //{ order: [['createdAt', 'DESC']] }
     );
     return comments;
   };
 
-  createComment = async (diaryId, userId, name, comment) => {
-    const createCommentData = await Comments.create({
-      diaryId,
-      userId,
-      name,
-      comment,
-    });
+  createComment = async (createForm: CreateCommentsForm) => {
+    const createCommentData = await Comments.create(createForm);
     return createCommentData;
   };
 
-  updateComment = async (commentId, comment) => {
-    const updateCommentData = await Comments.update(
+  updateComment = async (commentId: number, comment: string) => {
+    await Comments.update(
       { comment },
       { where: { commentId } }
     );
-
-    return await Comments.findOne({ where: { commentId } });
   };
 
-  deleteComment = async (commentId, userId) => {
+  deleteComment = async (commentId: number, userId: number) => {
     const deleteCommentData = await Comments.destroy({
       where: { commentId, userId },
     });
     return deleteCommentData;
   };
 
-  findByComment = async (commentId) => {
+  findByComment = async (commentId: number) => {
     return await Comments.findByPk(commentId);
   };
 }

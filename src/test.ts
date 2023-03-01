@@ -7,8 +7,8 @@ import sequelize from './db/config/connection';
 import associate from './db/config/associate';
 import indexRouter from './api/routes/index';
 
-import passportConfig from './passport'
-passportConfig();
+// import passportConfig from './passport'
+// passportConfig();
 
 export const app = express();
 

@@ -16,6 +16,7 @@ class Comments extends Model<
   declare userId: number;
   declare myhomeId: number;
   declare diaryId: number;
+  declare name: string;
   declare comment: string;
   declare createdAt: CreationOptional<number>;
   declare updatedAt: CreationOptional<number>;
@@ -62,6 +63,10 @@ Comments.init(
         key: 'diaryId',
       },
       onDelete: 'cascade',
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     comment: {
       type: DataTypes.STRING,
