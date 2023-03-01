@@ -1,71 +1,68 @@
+import express, { Express } from 'express';
+import helmet from 'helmet';
+import error from './middlewares/errorhandlers';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
 import env from './config.env';
-// const redis = require('redis');
-import express from 'express';
-import { createServer } from 'https';
-import fs from 'fs'
-// import error from './middlewares/errorhandlers';
-// import sequelize from './db/config/connection';
-// import associate from './db/config/associate';
-// import {stream} from './util/logger'
-import helmet from 'helmet'
-import { errorHandler, errorLogger } from './routes/middlewares/error-hander.middleware';
-import { myHomeCountSchedule } from './util/setSchedule';
+import router from './api/routes/index';
 
-// import cookieParser from 'cookieParser'
-// import session from 'cookie-session'
-// import passport from 'passport'
-import passportConfig from './passport'
-passportConfig();
+// import passportConfig from './passport';
+// passportConfig();
 
-const app = express();
-const https = createServer(app);
-const router = require('./routes');
-const port = process.env.EXPRESS_PORT || 3000;
-// let corsOptions = {
-//   origin: process.env.FRONT_END_URL,
-//   credentials: true,
-// };
+class App {
+  public app: Express;
 
-myHomeCountSchedule();
+  constructor() {
+    this.app = express();
+    this.middleware();
+    this.testUrl();
+    this.router();
+  }
 
-// app.use(
-//   session({
-//     resave: false,
-//     saveUninitialized: false,
-//     secret: [process.env.KAKAO_SECRET, process.env.GOOGLE_SECRET],
-//     cookie: {
-//       httpOnly: true,
-//       secure: false,
-//     },
-//   })
-// );
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use(cors(corsOptions));
-// app.use(cookieParser());
-app.use(helmet());
-// app.use(morgan('combined', { stream }));
-app.use(express.json());
-app.use('/api', router);
-// app.use(hpp());
-app.use(express.urlencoded({ extended: false }));
-app.use(errorLogger); // Error Logger
-app.use(errorHandler); // Error Handler
+  public middleware() {
+    this.app.use(express.json());
+    this.app.use(cookieParser());
+    this.app.use(helmet());
+    this.app.use(error.handler, error.logger);
+    this.app.use(
+      session({
+        resave: true,
+        saveUninitialized: false,
+        secret: env.SESSION_KEY,
+        cookie: {
+          httpOnly: true,
+          secure: false,
+        },
+      })
+    );
+    this.app.use((req, res, next) => {
+      res.set({
+        'Access-Control-Allow-Origin': req.headers.origin,
+        'Access-Control-Allow-Headers': 'XMLHttpRequest,Content-Type',
+        'Access-Control-Allow-Methods': 'POST,GET,PUT,DELETE',
+        'Access-Control-Allow-Credentials': true,
+        'Access-Control-Allow-Private-Network': true,
+      });
+      next();
+    });
+  }
 
-try {
-  const option = {
-    ca: fs.readFileSync(env.CA_FULL_CHAIN),
-    key: fs.readFileSync(env.KEY_PRIVKEY),
-    cert: fs.readFileSync(env.CERT_CERT),
-  };
+  public router() {
+    this.app.use('/', router);
 
-  createServer(option, app).listen(port, () => {
-    console.log('🟢 HTTPS 서버가 실행되었습니다. 포트 :: ' + port);
-  });
-} catch (error) {
-  app.listen(port, () => {
-    console.log('🟢 HTTP 서버가 실행되었습니다. 포트 :: ' + port);
-  });
+    this.app.use((req, res, next) => {
+      const error = new Error('PAGE NOT FOUND');
+      // res.status(404).send(error.message);
+      res.status(404).json({ message: error.message });
+    });
+  }
+
+  public testUrl() {
+    this.app.get('/', (req, res) => {
+      console.log('success');
+      res.status(200).send('success');
+    });
+  }
 }
 
-module.exports = https;
+export default new App();
