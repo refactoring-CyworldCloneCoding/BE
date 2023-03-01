@@ -6,4 +6,6 @@ cd $REPOSITORY
 
 npm install
 
-sudo npm start
+sudo pm2 kill
+
+sudo pm2 start build/server.js
