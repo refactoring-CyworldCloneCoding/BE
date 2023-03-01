@@ -1,44 +1,62 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: cyworld_refac_backend
 
 on:
   push:
-    branches: [dev]
+    branches: [ "dev" ]
   pull_request:
-    branches: [dev]
+    branches: [ "dev" ]
 
 jobs:
-  build:
+  buildAndTest:
+    name: CI Pipeline
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+	
+    steps:
+      - uses: actions/checkout@v3
+	
+      # Initialize Node.js
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      # Install project dependencies, test and build
+      - name: Install dependencies
+        run: npm install
+      - name: Run build
+        run: npm run build
+
+  deploy:
+    name: CD Pipeline
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    needs: buildAndTest
     steps:
-      - name: Checkout source code.
-        uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: create env file
-        working-directory: ./src/
+      - uses: actions/checkout@v3
+      - name: Create env file
         run: |
           touch .env
           cat << EOF >> .env
           ${{ secrets.ENV }}
+      # Initialize Node.js
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
 
-      - name: build client files
-        working-directory: ./
-        run: |
-          npm install
-
+      # Install project dependencies and build
+      - name: Install dependencies
+        run: npm install
+      # TS 파일들을 빌드해서 build 폴더에 js 파일들을 만들기 때문에
+      # 아래에서 zip 파일 구성 시 src 폴더를 제외한 것을 확인할 수 있다.
       - name: Run build
         run: npm run build
 
