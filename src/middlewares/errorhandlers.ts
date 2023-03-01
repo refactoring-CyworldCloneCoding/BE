@@ -21,11 +21,11 @@ class ErrorHandler {
     if (error instanceof HttpException) {
       const status = error.status || 400;
       res.status(status).json({
-        message: error.message,
+        msg: error.message,
       });
     } else {
-      res.status(500).json({
-        message: error.message,
+      res.status(400).json({
+        msg: error.message,
       });
     }
   }

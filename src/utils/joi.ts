@@ -44,4 +44,12 @@ export default {
       .required()
       .error(new Error('이메일 또는 패스워드를 확인해주세요.')),
   }),
+
+  emailCheckSchema: Joi.object({
+    email: Joi.string()
+      .required()
+      .min(4)
+      .max(10)
+      .error(new Error('4~10자 영문 및 숫자로만 입력 가능합니다.')),
+  }),
 };

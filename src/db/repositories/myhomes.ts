@@ -1,12 +1,49 @@
-import { MyhomeCounts, Myhomes } from '../models';
+import { Users, MyhomeCounts, Myhomes } from '../models';
 import { TodayForm } from '../../interfaces/myHome';
+
+interface MyhomeCreateForm {
+  userId: number;
+  intro: string;
+  today: number;
+  total: number;
+}
 
 class MyhomesRepositories extends Myhomes {
   constructor() {
     super();
   }
+  createNewMyhome = async (userId: number) => {
+    const createForm: MyhomeCreateForm = {
+      userId,
+      intro: '',
+      today: 0,
+      total: 0,
+    };
+    await Myhomes.create(createForm);
+  };
+
+  findUserMyhome = async (userId: number) => {
+    return await Myhomes.findOne({
+      where: { userId },
+    });
+  };
+
   findByMyhome = async (myhomeId: number) => {
-    return await Myhomes.findByPk(myhomeId);
+    return await Myhomes.findOne({
+      where: { myhomeId },
+      include: [
+        {
+          model: Users,
+          attributes: { exclude: ['password'] },
+        },
+      ],
+    });
+  };
+
+  findMaxHome = async () => {
+    return Myhomes.findOne({
+      order: [['myhomeId', 'desc']],
+    });
   };
 
   todayTotalCheck = async (myhomeId: number, ip: string) => {

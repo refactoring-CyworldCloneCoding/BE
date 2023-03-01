@@ -6,8 +6,7 @@ class UsersRepositories extends Users {
     super();
   }
   createUser = async (user: UserInfo) => {
-    const createUser = await Users.create(user);
-    return createUser;
+    return await Users.create(user);
   };
 
   findOneId = async (userId: number) => {

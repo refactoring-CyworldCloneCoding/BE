@@ -8,7 +8,8 @@ class UsersService {
   createUser = async (users: UserInfo) => {
     users.email += '@cyworld.com';
 
-    await Users.createUser(users);
+    const user = await Users.createUser(users);
+    await Myhomes.createNewMyhome(user.userId);
   };
 
   emailDuplicates = async (email: string) => {
@@ -28,15 +29,21 @@ class UsersService {
     const accesstoken = jwt.sign({ userId: user.userId });
     const refreshtoken = jwt.refresh();
     // await Users.updateRefresh(refreshtoken, user);
-    return { accesstoken, refreshtoken, userId: user.userId };
+
+    const findMyhome = await Myhomes.findUserMyhome(user.userId);
+    return {
+      accesstoken: 'Bearer ' + accesstoken,
+      refreshtoken: 'Bearer ' + refreshtoken,
+      myhomeId: findMyhome!.myhomeId,
+    };
   };
 
   surfing = async () => {
-    const maxUserId = await Users.findMaxUser();
+    const maxMyhomeId = await Myhomes.findMaxHome();
 
-    const random = Math.ceil(Math.random() * maxUserId!.userId);
+    const random = Math.ceil(Math.random() * maxMyhomeId!.myhomeId);
 
-    return await Users.findByUser(random);
+    return await Myhomes.findByMyhome(random);
   };
 
   todayTotal = async (req: Request) => {
@@ -88,16 +95,16 @@ class UsersService {
   };
 
   myhome = async (req: Request) => {
-    const { userId } = req.params;
-    return await Users.findByUser(+userId);
+    const { myhomeId } = req.params;
+    return await Myhomes.findByMyhome(+myhomeId);
   };
 
   findByMyhome = async (myhomeId: number) => {
     return await Myhomes.findByMyhome(myhomeId);
   };
 
-  introupdate = async (userId: number, intro: string) => {
-    await Myhomes.introUpdate(userId, intro);
+  introupdate = async (myhomeId: number, intro: string) => {
+    await Myhomes.introUpdate(myhomeId, intro);
   };
 
   //도토리
