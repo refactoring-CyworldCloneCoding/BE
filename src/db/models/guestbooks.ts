@@ -12,9 +12,10 @@ class Guestbooks extends Model<
   InferAttributes<Guestbooks>,
   InferCreationAttributes<Guestbooks>
 > {
-  declare guestBookId: CreationOptional<number>;
+  declare guestbookId: CreationOptional<number>;
   declare myhomeId: number;
   declare userId: number;
+  declare guestBookNum: number;
   declare guestBook: string;
   declare bookImage: string;
   declare createdAt: CreationOptional<number>;
@@ -28,7 +29,7 @@ class Guestbooks extends Model<
 
 Guestbooks.init(
   {
-    guestBookId: {
+    guestbookId: {
       allowNull: false, // NOT NULL, Null을 허용하지 않음
       autoIncrement: true, // AUTO_INCREMENT
       primaryKey: true, // PRIMARY KEY, 기본키
@@ -52,6 +53,10 @@ Guestbooks.init(
         key: 'userId',
       },
       onDelete: 'cascade',
+    },
+    guestBookNum: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     guestBook: {
       type: DataTypes.STRING,
