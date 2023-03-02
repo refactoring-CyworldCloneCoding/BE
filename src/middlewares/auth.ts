@@ -2,11 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 
-interface TokenInfo {
-  accesstoken: string;
-  refreshtoken: string;
-}
-
 export default {
   authMiddleware: (req: Request, res: Response, next: NextFunction) => {
     const invalidError = new Error('로그인이 필요한 기능입니다.');

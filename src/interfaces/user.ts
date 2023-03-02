@@ -7,4 +7,8 @@ interface UserInfo {
   refreshToken?: string;
 }
 
-export { UserInfo }
+interface PayloadI {
+  [key: string]: number | string;
+}
+
+export { UserInfo, PayloadI };

@@ -10,6 +10,8 @@ export default {
     email: Joi.string()
       // .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
       .alphanum()
+      .min(4)
+      .max(10)
       .required()
       .error(new Error('이메일 형식이 올바르지 않습니다.')),
     name: Joi.string()
@@ -48,6 +50,7 @@ export default {
   emailCheckSchema: Joi.object({
     email: Joi.string()
       .required()
+      .alphanum()
       .min(4)
       .max(10)
       .error(new Error('4~10자 영문 및 숫자로만 입력 가능합니다.')),
