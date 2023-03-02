@@ -20,19 +20,29 @@ class IlchonpyungsRepository {
     });
   };
 
-  findByBest = async (ilchonpyungId: number) => {
-    return await Ilchonpyungs.findByPk(ilchonpyungId);
-  };
-
-  deleteBest = async (userId: number, ilchonpyungId: number) => {
-    await await Ilchonpyungs.destroy({
-      where: { userId, ilchonpyungId },
+  findByBest = async (ilchonpyungId: number, myhomeId: number) => {
+    return await Ilchonpyungs.findOne({
+      where: { ilchonpyungId, myhomeId },
     });
   };
 
-  // findByUser = async (myhomeId: number) => {
-  //   return await Myhomes.findByPk(myhomeId);
-  // };
+  updateBest = async ({
+    ilchonpyungId,
+    userId,
+    ilchonpyung,
+    nick,
+  }: CreateIlchonpyungForm) => {
+    await Ilchonpyungs.update(
+      { ilchonpyung, nick },
+      { where: { ilchonpyungId, userId } }
+    );
+  };
+
+  deleteBest = async (ilchonpyungId: number, myhomeId: number) => {
+    await Ilchonpyungs.destroy({
+      where: { ilchonpyungId, myhomeId },
+    });
+  };
 }
 
 export default new IlchonpyungsRepository();

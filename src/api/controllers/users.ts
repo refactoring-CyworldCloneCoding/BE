@@ -98,8 +98,6 @@ export default {
       const findMyHome = await Users.findByMyhome(+myhomeId);
 
       if (!findMyHome) throw new Error('잘못된 요청입니다.');
-      console.log('userId: ', userId);
-      console.log('findMyHome.userId: ', findMyHome.userId);
       if (userId != findMyHome.userId)
         throw new Error('본인 소개글만 수정가능합니다.');
 

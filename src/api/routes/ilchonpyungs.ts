@@ -5,14 +5,15 @@ import auth from '../../middlewares/auth';
 const router = Router();
 
 router
-  .route('/:ilchonpyungId/:userId')
+  .route('/:ilchonpyungId/:myhomeId')
   /**
    * DELETE : 해당 미니홈피의 일촌평 삭제
    */
+  .put(auth.authMiddleware, Ilchonpyungs.updateBest)
   .delete(auth.authMiddleware, Ilchonpyungs.deleteBest);
 
 router
-  .route('/:userId')
+  .route('/:myhomeId')
   /**
    * POST : 해당 미니홈피의 일촌평 작성,
    * GET : 해당 미니홈피의 일촌평 목록 조회

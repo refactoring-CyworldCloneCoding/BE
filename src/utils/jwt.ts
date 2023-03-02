@@ -6,7 +6,7 @@ export default {
   sign: (payload: JwtPayload) => {
     return jwt.sign(payload, env.JWT_KEY, {
       algorithm: 'HS256',
-      expiresIn: 60 * 10,
+      expiresIn: 60 * 60 * 12,
     });
   },
   verify: (accessToken: string) => {
