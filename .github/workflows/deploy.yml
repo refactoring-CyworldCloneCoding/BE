@@ -61,7 +61,7 @@ jobs:
         run: npm run build
 
       - name: zip file
-        run: zip -r cicdtest.zip ./build/src ./scripts ./appspec.yml ./.env ./package.json
+        run: zip -r cicdtest.zip ./build/src ./build/server.js ./scripts ./appspec.yml ./.env ./package.json
 
       - name: AWS connect
         uses: aws-actions/configure-aws-credentials@v1
