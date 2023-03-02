@@ -59,7 +59,7 @@ export default {
     if (ilchonpyung.length < 3)
       throw new Error('일촌평을 3자이상 입력해주세요.');
 
-    const best = await Ilchonpyungs.findByBest(+ilchonpyungId);
+    const best = await Ilchonpyungs.findByBest(+ilchonpyungId, +myhomeId);
     const myhome = await Myhomes.findByMyhome(+myhomeId);
 
     console.log('best.userId: ', best?.userId);
@@ -86,7 +86,7 @@ export default {
     const { ilchonpyungId, myhomeId } = req.params;
     const { user } = res.app.locals;
 
-    const best = await Ilchonpyungs.findByBest(+ilchonpyungId);
+    const best = await Ilchonpyungs.findByBest(+ilchonpyungId, +myhomeId);
     const myhome = await Myhomes.findByMyhome(+myhomeId);
 
     if (!best || !myhome) throw new Error('잘못된 요청입니다.');
