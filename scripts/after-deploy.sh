@@ -1,11 +1,13 @@
 #!/bin/bash
-REPOSITORY=/home/ubuntu/projects/cyworld-refac
+REPOSITORY=/home/ubuntu/projects
 
 
 cd $REPOSITORY
 
 npm install
 
-sudo pm2 kill
+sudo su
 
-sudo export NODE_ENV=production && pm2 start build/server.js
+pm2 kill
+
+export NODE_ENV=production && pm2 start build/server.js
