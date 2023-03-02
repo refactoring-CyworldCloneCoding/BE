@@ -25,6 +25,12 @@ class MyhomesRepositories extends Myhomes {
   findUserMyhome = async (userId: number) => {
     return await Myhomes.findOne({
       where: { userId },
+      include: [
+        {
+          model: Users,
+          attributes: { exclude: ['password'] },
+        },
+      ],
     });
   };
 

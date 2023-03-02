@@ -2,56 +2,58 @@ import { Request } from 'express';
 import { Myhomes, Users } from '../db/repositories';
 import jwt from '../utils/jwt';
 import bcrypt from 'bcrypt';
-import { UserInfo } from '../interfaces/user';
+import { PayloadI, UserInfo } from '../interfaces/user';
 
-class UsersService {
-  createUser = async (users: UserInfo) => {
+export default {
+  createUser: async (users: UserInfo) => {
     users.email += '@cyworld.com';
 
     const user = await Users.createUser(users);
     await Myhomes.createNewMyhome(user.userId);
-  };
+  },
 
-  emailDuplicates = async (email: string) => {
+  emailDuplicates: async (email: string) => {
     return await Users.findOneEmail(email + '@cyworld.com');
-  };
+  },
 
-  userLogin = async (email: string, password: string) => {
+  userLogin: async (email: string, password: string) => {
     const user = await Users.findOneEmail(email);
-    if (!user) {
-      throw new Error('가입하신 회원이 아닙니다.');
-    }
+    if (!user) throw new Error('가입하신 회원이 아닙니다.');
 
     const isEqual = await bcrypt.compare(password, user.password);
-    if (!isEqual) {
-      throw new Error('비밀번호가 다릅니다.');
-    }
-    const accesstoken = jwt.sign({ userId: user.userId });
+    if (!isEqual) throw new Error('비밀번호가 다릅니다.');
+
+    const findMyhome = await Myhomes.findUserMyhome(user.userId);
+
+    const payload: PayloadI = {
+      myhomeId: findMyhome!.myhomeId,
+      userId: user.userId,
+      name: user.name,
+    };
+
+    const accesstoken = jwt.sign(payload);
     const refreshtoken = jwt.refresh();
     // await Users.updateRefresh(refreshtoken, user);
 
-    const findMyhome = await Myhomes.findUserMyhome(user.userId);
     return {
       accesstoken: 'Bearer ' + accesstoken,
       refreshtoken: 'Bearer ' + refreshtoken,
-      myhomeId: findMyhome!.myhomeId,
+      ...payload,
     };
-  };
+  },
 
-  surfing = async () => {
+  surfing: async () => {
     const maxMyhomeId = await Myhomes.findMaxHome();
 
     const random = Math.ceil(Math.random() * maxMyhomeId!.myhomeId);
 
     return await Myhomes.findByMyhome(random);
-  };
+  },
 
-  todayTotal = async (req: Request) => {
+  todayTotal: async (req: Request) => {
     // 현재 사용중인 유저의 ip를 가져온다.
     const ipAdress: string = req.ip.split(':').pop()!;
-
     const { myhomeId } = req.params;
-
     const findByUser = await Myhomes.findByMyhome(+myhomeId);
 
     if (!findByUser) throw new Error('존재하지 않는 미니홈피 입니다.');
@@ -92,23 +94,22 @@ class UsersService {
         ip: ipAdress,
         time: time.toString(),
       });
-  };
+  },
 
-  myhome = async (req: Request) => {
-    const { myhomeId } = req.params;
-    return await Myhomes.findByMyhome(+myhomeId);
-  };
-
-  findByMyhome = async (myhomeId: number) => {
+  findByMyhome: async (myhomeId: number) => {
     return await Myhomes.findByMyhome(myhomeId);
-  };
+  },
 
-  introupdate = async (myhomeId: number, intro: string) => {
+  findUserMyhome: async (userId: number) => {
+    return await Myhomes.findUserMyhome(userId);
+  },
+
+  introupdate: async (myhomeId: number, intro: string) => {
     await Myhomes.introUpdate(myhomeId, intro);
-  };
+  },
 
   //도토리
-  // chargeDotori = async (req, res) => {
+  // chargeDotori: async (req, res) => {
   //   // 1. 도토리 충전요청 받을때 직접 금약 입력과 쿠폰입력 2가지로 처리방식
   //   // 2. 예외처리로 둘다 입력안됬을 때와 둘다 입력했을때, 틀린 쿠폰번호 입력했을때
   //   const { userId } = res.locals.user;
@@ -146,9 +147,8 @@ class UsersService {
   //   return price / 100;
   // };
 
-  // chargeCoupons = async (req, res, next) => {
+  // chargeCoupons: async (req, res, next) => {
   //   const { boop } = req.body;
   //   await Users.chargeCoupons();
   // };
-}
-export default new UsersService();
+};

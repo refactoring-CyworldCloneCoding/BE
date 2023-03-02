@@ -4,8 +4,8 @@ import Joi from '../../utils/joi';
 import bcrypt from 'bcrypt';
 import { UserInfo } from '../../interfaces/user';
 
-class UsersController {
-  signup = async (req: Request, res: Response, next: NextFunction) => {
+export default {
+  signup: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, name, password, confirm, gender, birth } =
         await Joi.signupSchema.validateAsync(req.body);
@@ -37,35 +37,24 @@ class UsersController {
       res.status(400).json({ msg: error.message });
       next(error);
     }
-  };
+  },
   //로그인
-  login = async (req: Request, res: Response, next: NextFunction) => {
+  login: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = await Joi.loginSchema.validateAsync(req.body);
       const user = await Users.userLogin(email, password);
+
       res.cookie('accesstoken', user.accesstoken);
       res.cookie('refreshtoken', user.refreshtoken);
-      res.status(200).json({
-        accesstoken: user.accesstoken,
-        refreshtoken: user.refreshtoken,
-        myhomeId: user.myhomeId,
-        msg: '로그인에 성공하였습니다',
-      });
-      // res
-      //   .status(200)
-      //   .set({
-      //     accessToken: 'Bearer ' + user.accessToken,
-      //     refreshToken: user.refreshToken,
-      //   })
-      //   .json({ msg: '로그인 되었습니다.' });
+      res.status(200).json({ ...user, msg: '로그인에 성공하였습니다' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);
     }
-  };
+  },
 
   //이메일 중복
-  emailCheck = async (req: Request, res: Response, next: NextFunction) => {
+  emailCheck: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email } = await Joi.emailCheckSchema.validateAsync(req.body);
 
@@ -77,9 +66,9 @@ class UsersController {
       res.status(400).json({ msg: error.message });
       next(error);
     }
-  };
+  },
 
-  surfing = async (req: Request, res: Response, next: NextFunction) => {
+  surfing: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await Users.surfing();
       res.status(200).send({ data: result!.myhomeId });
@@ -87,60 +76,58 @@ class UsersController {
       res.status(400).json({ msg: error.message });
       next(error);
     }
-  };
+  },
 
-  myhome = async (req: Request, res: Response, next: NextFunction) => {
+  myhome: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { myhomeId } = req.params;
       await Users.todayTotal(req);
-      const result = await Users.myhome(req);
+      const result = await Users.findByMyhome(+myhomeId);
       res.status(200).send({ data: result });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);
     }
-  };
+  },
 
-  // myhome = async (req: Request, res: Response, next: NextFunction) => {
-  //   try {
-  //     const { userId } = req.params;
-  //     const myhome = await this.Users.findOneId(userId);
-  //     res.status(200).json({ data: myhome });
-    // } catch (error: any) {
-    //   res.status(400).json({ msg: error.message });
-      // next(error);
-    // }
-  // };
-  intro = async (req: Request, res: Response, next: NextFunction) => {
+  intro: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { myhomeId } = req.params;
       const { intro } = req.body;
+      const { userId } = res.app.locals.user;
+      const findMyHome = await Users.findByMyhome(+myhomeId);
+
+      if (!findMyHome) throw new Error('잘못된 요청입니다.');
+      console.log('userId: ', userId);
+      console.log('findMyHome.userId: ', findMyHome.userId);
+      if (userId != findMyHome.userId)
+        throw new Error('본인 소개글만 수정가능합니다.');
+
       await Users.introupdate(+myhomeId, intro);
       res.status(200).json({ msg: 'intro가 수정되었습니다' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);
     }
-  };
+  },
 
   //도토리
-  // chargeDotori = async (req: Request, res: Response, next: NextFunction) => {
+  // chargeDotori: async (req: Request, res: Response, next: NextFunction) => {
   //   try {
   //     const price = await Users.chargeDotori(req, res);
   //     res.status(200).send({ msg: `도토리 ${price}개가 충전되었습니다.` });
-    // } catch (error: any) {
-    //   res.status(400).json({ msg: error.message });
-      // next(error);
-    // }
+  // } catch (error: any) {
+  //   res.status(400).json({ msg: error.message });
+  // next(error);
+  // }
   // };
 
-  // chargeCoupons = (req: Request, res: Response, next: NextFunction) => {
+  // chargeCoupons: (req: Request, res: Response, next: NextFunction) => {
   //   try {
   //     res.status(200).send({ msg: `쿠폰으로 ${coupon}개가 충전되었습니다.` });
-    // } catch (error: any) {
-    //   res.status(400).json({ msg: error.message });
-      // next(error);
-    // }
+  // } catch (error: any) {
+  //   res.status(400).json({ msg: error.message });
+  // next(error);
+  // }
   // };
-}
-
-export default new UsersController();
+};
