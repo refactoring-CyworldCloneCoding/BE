@@ -8,4 +8,4 @@ npm install
 
 sudo pm2 kill
 
-sudo export NODE_ENV=production && pm2 start server.js
+sudo export NODE_ENV=production && pm2 start build/server.js
