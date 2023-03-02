@@ -24,9 +24,20 @@ class IlchonpyungsRepository {
     return await Ilchonpyungs.findByPk(ilchonpyungId);
   };
 
-  deleteBest = async (userId: number, ilchonpyungId: number) => {
+  updateBest = async ({
+    ilchonpyungId,
+    ilchonpyung,
+    nick,
+  }: CreateIlchonpyungForm) => {
+    await await Ilchonpyungs.update(
+      { ilchonpyung, nick },
+      { where: { ilchonpyungId } }
+    );
+  };
+
+  deleteBest = async (myhomeId: number, ilchonpyungId: number) => {
     await await Ilchonpyungs.destroy({
-      where: { userId, ilchonpyungId },
+      where: { myhomeId, ilchonpyungId },
     });
   };
 
