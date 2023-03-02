@@ -1,5 +1,5 @@
 #!/bin/bash
-REPOSITORY=/home/ubuntu/sparta/project/src
+REPOSITORY=/home/ubuntu/projects/cyworld-refac
 
 
 cd $REPOSITORY
