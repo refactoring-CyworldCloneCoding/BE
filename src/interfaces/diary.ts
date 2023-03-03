@@ -1,14 +1,15 @@
 interface CreateDiaryForm {
   myhomeId: number;
+  userId: number;
   name: string;
-  dirImg: string;
+  dirImg: string | null | undefined;
   content: string;
   diaryNo: number;
 }
 
 interface UpdateDiaryForm {
   diaryId: number;
-  dirImg: string;
+  dirImg: string | null | undefined;
   content: string;
 }
 
