@@ -4,7 +4,14 @@ import { Diaries } from '../models';
 class DiaryRepository {
   findAllDiary = async (myhomeId: number) => {
     // 다양한 유저들이 존재해서 해당 유저가 작성한 게시글이 필요함
-    return await Diaries.findAll({ where: { myhomeId } });
+    return await Diaries.findAll({
+      where: { myhomeId: myhomeId },
+      // order: [['diaryId', 'desc']],
+    });
+  };
+
+  findOneDiary = async (diaryId: number) => {
+    return await Diaries.findByPk(diaryId);
   };
 
   createDiary = async (createDiary: CreateDiaryForm) => {
@@ -13,15 +20,10 @@ class DiaryRepository {
 
   updateDiary = async ({ diaryId, dirImg, content }: UpdateDiaryForm) => {
     await Diaries.update({ content, dirImg }, { where: { diaryId } });
-
-    return await Diaries.findOne({ where: { diaryId } });
   };
 
   deleteDiary = async (diaryId: number) => {
-    // const deleteDiaryImg = await Diaries.findOne({ where: { diaryId } });
-
-    const deleteDiaryData = await Diaries.destroy({ where: { diaryId } });
-    return deleteDiaryData;
+    await Diaries.destroy({ where: { diaryId } });
   };
 }
 

@@ -5,21 +5,21 @@ import S3Upload from '../../middlewares/diaryUpload'
 
 const router = Router();
 
-router.get('/:userId', Diaries.getDiary);
+router.get('/:myhomeId', Diaries.getDiary);
 router.post(
-  '/:userId',
+  '/:myhomeId',
   auth.authMiddleware,
   S3Upload.upload.single('dirImg'),
   Diaries.createDiary
 );
 router.put(
-  '/:diaryId/:userId',
+  '/:myhomeId/:diaryId',
   auth.authMiddleware,
   S3Upload.upload.single('dirImg'),
   Diaries.updateDiary
 );
 router.delete(
-  '/:diaryId/:userId',
+  '/:myhomeId/:diaryId',
   auth.authMiddleware,
   S3Upload.delete_file,
   Diaries.deleteDiary

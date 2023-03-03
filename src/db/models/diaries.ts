@@ -6,23 +6,23 @@ import {
   InferCreationAttributes,
 } from 'sequelize';
 import sequelize from '../config/connection';
-import { Users, Myhomes, Comments } from '.';
+import { Myhomes, Comments, Users } from '.';
 
 class Diaries extends Model<
   InferAttributes<Diaries>,
   InferCreationAttributes<Diaries>
 > {
   declare diaryId: CreationOptional<number>;
-  // declare userId: number;
+  declare userId: number;
   declare myhomeId: number;
   declare diaryNo: number;
   declare content: string;
-  declare dirImg: string;
+  declare dirImg: string | null | undefined;
   declare createdAt: CreationOptional<number>;
   declare updatedAt: CreationOptional<number>;
 
   static associate() {
-    // this.belongsTo(Users, { foreignKey: 'userId' });
+    this.belongsTo(Users, { foreignKey: 'userId' });
     this.belongsTo(Myhomes, { foreignKey: 'myhomeId' });
     this.hasMany(Comments, {
       sourceKey: 'diaryId',
@@ -49,15 +49,15 @@ Diaries.init(
       },
       onDelete: 'cascade',
     },
-    // userId: {
-    // type: DataTypes.INTEGER.UNSIGNED,
-    //   allowNull: false,
-    //   references: {
-    //     model: 'Users',
-    //     key: 'userId',
-    //   },
-    //   onDelete: 'cascade',
-    // },
+    userId: {
+    type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'userId',
+      },
+      onDelete: 'cascade',
+    },
     diaryNo: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,

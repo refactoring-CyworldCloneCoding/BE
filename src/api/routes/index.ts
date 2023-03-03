@@ -16,7 +16,7 @@ router.use('/bests', ilchonpyungsRouter);
 router.use('/coupons', usersRouter);
 
 router.use('/diaries', diariesRouter);
-router.use('/diaries/comments', commentsRouter);
+router.use('/comments', commentsRouter);
 router.use('/guestbooks', guestBooksRouter);
 
 // router.use('/', kakaoRouter);
