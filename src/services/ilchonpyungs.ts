@@ -62,9 +62,6 @@ export default {
     const best = await Ilchonpyungs.findByBest(+ilchonpyungId, +myhomeId);
     const myhome = await Myhomes.findByMyhome(+myhomeId);
 
-    console.log('best.userId: ', best?.userId);
-    console.log('user.userId: ', user.userId);
-
     if (!best || !myhome) throw new Error('잘못된 요청입니다.');
     if (best.userId != user.userId)
       throw new Error('본인이 작성한 일촌평이 아닙니다.');

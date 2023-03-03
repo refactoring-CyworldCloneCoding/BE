@@ -16,6 +16,7 @@ class Ilchonpyungs extends Model<
   declare userId: number;
   declare myhomeId: number;
   declare nick: string;
+  declare name: string;
   declare ilchonpyung: string;
   declare createdAt: CreationOptional<number>;
   declare updatedAt: CreationOptional<number>;
@@ -54,6 +55,10 @@ Ilchonpyungs.init(
       onDelete: 'cascade',
     },
     nick: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+    },
+    name: {
       type: DataTypes.STRING(20),
       allowNull: false,
     },
