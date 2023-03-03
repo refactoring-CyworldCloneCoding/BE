@@ -90,6 +90,6 @@ export default {
     if (best.userId !== user.userId)
       throw new Error('본인이 작성한 일촌평이 아닙니다.');
 
-    await Ilchonpyungs.deleteBest(+myhomeId, +ilchonpyungId);
+    await Ilchonpyungs.deleteBest(+ilchonpyungId, +myhomeId);
   },
 };
