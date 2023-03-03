@@ -56,7 +56,8 @@ class DiaryService {
 
     const myhome = await Myhomes.findByMyhome(+myhomeId);
     if (!myhome) throw new Error('잘못된 요청입니다.');
-
+    const diary = await Diaries.findOneDiary(+diaryId);
+    if (!diary) throw new Error('잘못된 요청입니다.');
     const file = req.file as Express.MulterS3.File;
 
     const imageFileName = file ? file.key : undefined;
