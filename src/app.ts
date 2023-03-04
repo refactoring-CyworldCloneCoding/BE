@@ -6,9 +6,12 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import env from './config.env';
 import router from './api/routes/index';
+import todayInit from './utils/todayInit';
 
 // import passportConfig from './passport';
 // passportConfig();
+
+todayInit.initStart();
 
 class App {
   public app: Express;
