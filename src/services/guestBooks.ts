@@ -7,13 +7,14 @@ import env from '../config.env'
 class GuestBooksService {
   // 방명록 작성
   createBook = async (req: Request, res: Response) => {
-    const { guestbook } = req.body;
+    const { guestbook, bookImage } = req.body;
     const { myhomeId } = req.params;
     const { user } = res.app.locals;
 
     // 미니홈피의 userId가 없을시 예외처리
     const existUser = await Myhomes.findByMyhome(+myhomeId);
-    if (!existUser) throw new Error('미니홈피가 존재하지 않습니다.');
+    if (!existUser || !bookImage)
+      throw new Error('잘못된 요청입니다.');
 
     // 방명록을 입력하지 않거나 3자 이하일 때 예외처리
     if (!guestbook) throw new Error('방명록을 입력해주세요.');
@@ -23,7 +24,7 @@ class GuestBooksService {
     if (existUser.userId === user.userId)
       throw new Error('내 미니홈피에는 방명록 작성이 불가합니다.');
 
-    const imegeURL = user.gender === '남자' ? 'gender/boy.png' : 'gender/girl.png';
+    // const imegeURL = user.gender === '남자' ? 'gender/boy.png' : 'gender/girl.png';
 
     const CreateForm: GuestBooksCreateForm = {
       myhomeId: +myhomeId,
@@ -31,7 +32,7 @@ class GuestBooksService {
       guestBookNum: 0,
       name: user.name,
       guestBook: guestbook,
-      bookImage: env.S3_STORAGE_URL + imegeURL,
+      bookImage,
     };
 
     await GuestBooks.createBook(CreateForm);
