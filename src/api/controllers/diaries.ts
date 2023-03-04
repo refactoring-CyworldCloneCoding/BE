@@ -36,16 +36,8 @@ class DiariesControllers {
   deleteDiary = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { diaryId } = req.params;
-      const { myhomeId } = req.params;
-      const { user } = res.app.locals;
-
-      const identification = await Users.findByMyhome(+myhomeId);
-
-      if (!identification) throw new Error('잘못된 요청입니다.');
-      if (user.userId !== identification.userId)
-        throw new Error('삭제 권한이 없습니다.');
-
-      await Diaries.deleteDiary(+diaryId);
+      const { userId } = res.app.locals.user;
+      await Diaries.deleteDiary(+diaryId, userId);
       res.status(200).json({ msg: '삭제되었습니다.' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
