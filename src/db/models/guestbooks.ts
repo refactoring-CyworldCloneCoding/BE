@@ -16,6 +16,7 @@ class Guestbooks extends Model<
   declare myhomeId: number;
   declare userId: number;
   declare guestBookNum: number;
+  declare name: string;
   declare guestBook: string;
   declare bookImage: string;
   declare createdAt: CreationOptional<number>;
@@ -56,6 +57,10 @@ Guestbooks.init(
     },
     guestBookNum: {
       type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING(40),
       allowNull: false,
     },
     guestBook: {
