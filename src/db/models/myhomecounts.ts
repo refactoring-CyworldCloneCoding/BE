@@ -16,8 +16,8 @@ class MyhomeCounts extends Model<
   declare ip: string;
   declare myhomeId: number;
   declare time: string;
-  declare createdAt: CreationOptional<number>;
-  declare updatedAt: CreationOptional<number>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 
   static associate() {
     this.belongsTo(Myhomes, { foreignKey: 'myhomeId' });
@@ -50,14 +50,8 @@ MyhomeCounts.init(
       type: DataTypes.STRING(20),
       allowNull: false,
     },
-    createdAt: {
-      type: DataTypes.INTEGER,
-      defaultValue: (Date.now() / 1000) | (0 + 60 * 60 * 9),
-    },
-    updatedAt: {
-      type: DataTypes.INTEGER,
-      defaultValue: (Date.now() / 1000) | (0 + 60 * 60 * 9),
-    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
   },
   {
     sequelize,

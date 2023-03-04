@@ -66,11 +66,11 @@ class MyhomesRepositories extends Myhomes {
     await Myhomes.increment({ today: 1, total: 1 }, { where: { myhomeId } });
   };
 
-  newTodayTotal = async ({ ip, time, myhomeId }: TodayForm) => {
-    await MyhomeCounts.update({ time }, { where: { ip, myhomeId } });
-    await Myhomes.increment({ total: 1 }, { where: { myhomeId } });
-    await Myhomes.update({ today: 1 }, { where: { myhomeId } });
-  };
+  // newTodayTotal = async ({ ip, time, myhomeId }: TodayForm) => {
+  //   await MyhomeCounts.update({ time }, { where: { ip, myhomeId } });
+  //   await Myhomes.increment({ total: 1 }, { where: { myhomeId } });
+  //   await Myhomes.update({ today: 1 }, { where: { myhomeId } });
+  // };
 
   introUpdate = async (myhomeId: number, intro: string) => {
     const introupdate = await Myhomes.update(

@@ -71,19 +71,6 @@ export default {
         ip: ipAdress,
         time: time.toString(),
       });
-    // 이전 조회수 업데이트 날짜와 현재 날짜가 다를경우 today는 1로 초기화, total +1
-    // 구현되는 것을 확인하기 위해 1분마다 today 초기화
-    const day = new Date() + '';
-    const myhomeDay = existIp.updatedAt + '';
-    const intervalDay: boolean =
-      parseInt(day.split(':')[1]) - parseInt(myhomeDay.split(':')[1]) === 0;
-
-    if (!intervalDay)
-      return await Myhomes.newTodayTotal({
-        myhomeId: +myhomeId,
-        ip: ipAdress,
-        time: time.toString(),
-      });
 
     // 조회수를 무작정 올리는것을 방지하기 위한 5초 간격
     const intervalCount = time - parseInt(existIp.time) > 5000;
