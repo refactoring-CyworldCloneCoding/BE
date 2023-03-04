@@ -24,8 +24,8 @@ class Myhomes extends Model<
   declare intro: string;
   declare today: number;
   declare total: number;
-  declare createdAt: CreationOptional<number>;
-  declare updatedAt: CreationOptional<number>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 
   static associate() {
     this.belongsTo(Users, { foreignKey: 'userId' });
@@ -85,14 +85,8 @@ Myhomes.init(
       allowNull: false,
       defaultValue: 0,
     },
-    createdAt: {
-      type: DataTypes.INTEGER,
-      defaultValue: (Date.now() / 1000) | (0 + 60 * 60 * 9),
-    },
-    updatedAt: {
-      type: DataTypes.INTEGER,
-      defaultValue: (Date.now() / 1000) | (0 + 60 * 60 * 9),
-    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
   },
   {
     sequelize,

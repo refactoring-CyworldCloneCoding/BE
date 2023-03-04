@@ -18,8 +18,8 @@ class Comments extends Model<
   declare diaryId: number;
   declare name: string;
   declare comment: string;
-  declare createdAt: CreationOptional<number>;
-  declare updatedAt: CreationOptional<number>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 
   static associate() {
     this.belongsTo(Users, { foreignKey: 'userId' });
@@ -72,14 +72,8 @@ Comments.init(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    createdAt: {
-      type: DataTypes.INTEGER,
-      defaultValue: (Date.now() / 1000) | (0 + 60 * 60 * 9),
-    },
-    updatedAt: {
-      type: DataTypes.INTEGER,
-      defaultValue: (Date.now() / 1000) | (0 + 60 * 60 * 9),
-    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE,
   },
   {
     sequelize,
