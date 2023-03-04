@@ -1,11 +1,17 @@
 import { CreateDiaryForm, UpdateDiaryForm } from '../../interfaces/diary';
-import { Diaries } from '../models';
+import { Diaries, Comments } from '../models';
 
 class DiaryRepository {
   findAllDiary = async (myhomeId: number) => {
     // 다양한 유저들이 존재해서 해당 유저가 작성한 게시글이 필요함
     return await Diaries.findAll({
       where: { myhomeId: myhomeId },
+      include: [
+        {
+          model: Comments,
+          // attributes: { exclude: ['password'] },
+        },
+      ],
       // order: [['diaryId', 'desc']],
     });
   };
