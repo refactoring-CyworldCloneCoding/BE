@@ -7,7 +7,13 @@ const sequelize = new Sequelize({
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   dialect: 'mysql',
+  timezone: '+09:00',
   logging: false,
+  dialectOptions: {
+    charset: 'utf8mb4',
+    dateStrings: true,
+    typeCast: true,
+  },
 });
 
 export default sequelize;
