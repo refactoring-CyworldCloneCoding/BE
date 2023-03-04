@@ -1,5 +1,5 @@
 import { GuestBooksCreateForm } from '../../interfaces/guestbook';
-import { Guestbooks, Users } from '../models';
+import { Guestbooks } from '../models';
 
 class GuestBooksRepository {
   createBook = async (CreateForm: GuestBooksCreateForm) => {
@@ -18,12 +18,12 @@ class GuestBooksRepository {
     return await Guestbooks.findByPk(guestbookId);
   };
 
-  // updateBook = async (guestbook, guestbookId) => {
-  //   await Guestbooks.update(
-  //     { guestBook: guestbook },
-  //     { where: { guestbookId } }
-  //   );
-  // };
+  updateBook = async (guestbook: string, guestbookId: number) => {
+    await Guestbooks.update(
+      { guestBook: guestbook },
+      { where: { guestbookId } }
+    );
+  };
 
   deleteBook = async (guestbookId: number) => {
     await Guestbooks.destroy({
