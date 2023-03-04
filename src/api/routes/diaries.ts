@@ -13,13 +13,13 @@ router.post(
   Diaries.createDiary
 );
 router.put(
-  '/:myhomeId/:diaryId',
+  '/:diaryId',
   auth.authMiddleware,
   S3Upload.upload.single('dirImg'),
   Diaries.updateDiary
 );
 router.delete(
-  '/:myhomeId/:diaryId',
+  '/:diaryId',
   auth.authMiddleware,
   S3Upload.delete_file,
   Diaries.deleteDiary

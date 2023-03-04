@@ -29,6 +29,7 @@ export default {
       myhomeId: findMyhome!.myhomeId,
       userId: user.userId,
       name: user.name,
+      gender: user.gender
     };
 
     const accesstoken = jwt.sign(payload);

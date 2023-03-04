@@ -37,7 +37,7 @@ class CommentsController {
     try {
       
       await Comments.deleteComment(req, res);
-      res.status(200).json({ msg: '삭제되었습니다.' });
+      res.status(200).json({ msg: '댓글이 삭제되었습니다.' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);

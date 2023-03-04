@@ -5,16 +5,16 @@ import auth from '../../middlewares/auth';
 const router = Router();
 
 router
-  .route('/:guestbookId/:userId')
+  .route('/:guestbookId')
   /**
    * PUT : 해당 미니홈피의 방명록 수정,
    * DELETE : 해당 미니홈피의 방명록 삭제
    */
-  // .put(auth, Guestbooks.updateBook)
+  .put(auth.authMiddleware, Guestbooks.updateBook)
   .delete(auth.authMiddleware, Guestbooks.deleteBook);
 
 router
-  .route('/:userId')
+  .route('/:myhomeId')
   /**
    * POST : 해당 미니홈피의 방명록 작성,
    * GET : 해당 미니홈피의 방명록 조회

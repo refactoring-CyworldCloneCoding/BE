@@ -50,12 +50,10 @@ class DiaryService {
   };
 
   updateDiary = async (req: Request, res: Response) => {
-    const { diaryId, myhomeId } = req.params;
+    const { diaryId } = req.params;
     const { content } = req.body;
     const { user } = res.app.locals;
 
-    const myhome = await Myhomes.findByMyhome(+myhomeId);
-    if (!myhome) throw new Error('잘못된 요청입니다.');
     const diary = await Diaries.findOneDiary(+diaryId);
     if (!diary) throw new Error('잘못된 요청입니다.');
     const file = req.file as Express.MulterS3.File;
@@ -65,7 +63,7 @@ class DiaryService {
       ? env.S3_STORAGE_URL + imageFileName
       : undefined;
     // 본인 이외의 사람이 다이어리 수정시 예외처리
-    if (user.userId !== myhome.userId) throw new Error('수정 권한이 없습니다.');
+    if (user.userId !== diary.userId) throw new Error('수정 권한이 없습니다.');
 
     const updateDiary: UpdateDiaryForm = {
       diaryId: +diaryId,
@@ -76,9 +74,10 @@ class DiaryService {
     await Diaries.updateDiary(updateDiary);
   };
 
-  deleteDiary = async (diaryId: number) => {
+  deleteDiary = async (diaryId: number, userId: number) => {
     const diary = await Diaries.findOneDiary(diaryId);
     if (!diary) throw new Error('잘못된 요청입니다.');
+    if (userId !== diary.userId) throw new Error('삭제 권한이 없습니다.');
     await Diaries.deleteDiary(diaryId);
   };
 }
