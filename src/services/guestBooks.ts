@@ -77,9 +77,9 @@ class GuestBooksService {
 
     // 삭제할 방명록이 없거나 본인이 작성한 방명록이 아닐 시 예외처리
     if (!findGuestBook) throw new Error('잘못된 요청입니다.');
-    if (findGuestBook.userId !== user.userId)
-      throw new Error('본인이 작성한 방명록이 아닙니다.');
-    await GuestBooks.deleteBook(+guestbookId);
+    if (findGuestBook.userId === user.userId || findGuestBook.myhomeId === user.myhomeId) await GuestBooks.deleteBook(+guestbookId);
+    else throw new Error('본인 또는 작성자만 삭제할 수 있습니다.');
+    
   };
 }
 

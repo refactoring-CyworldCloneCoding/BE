@@ -87,9 +87,9 @@ export default {
     const myhome = await Myhomes.findByMyhome(+myhomeId);
 
     if (!best || !myhome) throw new Error('잘못된 요청입니다.');
-    if (best.userId !== user.userId)
-      throw new Error('본인이 작성한 일촌평이 아닙니다.');
+    if (best.userId === user.userId || best.myhomeId === user.myhomeId) await Ilchonpyungs.deleteBest(+ilchonpyungId, +myhomeId);
+    else throw new Error('본인 또는 작성자만 삭제할 수 있습니다.');
 
-    await Ilchonpyungs.deleteBest(+ilchonpyungId, +myhomeId);
+    
   },
 };
