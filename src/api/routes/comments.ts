@@ -4,9 +4,9 @@ import auth from '../../middlewares/auth';
 
 const router = Router();
 
-router.get('/:userId', Comments.getComment);
-router.post('/:diaryId/:userId', auth.authMiddleware, Comments.createComment);
-router.put('/:diaryId/:commentId', auth.authMiddleware, Comments.updataComment);
-router.delete('/:diaryId/:commentId', auth.authMiddleware, Comments.deleteComment);
+router.get('/:myhomeId/:diaryId', Comments.getComment);
+router.post('/:myhomeId/:diaryId', auth.authMiddleware, Comments.createComment);
+router.put('/:commentId', auth.authMiddleware, Comments.updataComment);
+router.delete('/:commentId', auth.authMiddleware, Comments.deleteComment);
 
 export default router;

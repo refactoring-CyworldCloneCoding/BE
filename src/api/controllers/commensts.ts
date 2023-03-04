@@ -1,67 +1,46 @@
 import { Request, Response, NextFunction } from 'express';
-import { CreateCommentsForm } from '../../interfaces/comment';
 import { Comments } from '../../services';
 
 class CommentsController {
   getComment = async (req: Request, res: Response, next: NextFunction) => {
-    const { myhomeId } = req.params;
-    const comments = await Comments.findAllComment(+myhomeId);
-    res.status(200).json({ data: comments });
+    try {
+      const { myhomeId, diaryId } = req.params;
+      const comments = await Comments.findAllComment(+myhomeId, +diaryId);
+      res.status(200).json({ data: comments });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
+    }
   };
 
   createComment = async (req: Request, res: Response, next: NextFunction) => {
-    const { diaryId, myhomeId } = req.params;
-    const { userId, name } = res.locals.user;
-    const { comment } = req.body;
-
-    const createForm: CreateCommentsForm = {
-      userId,
-      diaryId: +diaryId,
-      myhomeId: +myhomeId,
-      name,
-      comment,
-    };
-
-    await Comments.createComment(createForm);
-    res.status(200).json();
+    try {
+      await Comments.createComment(req, res);
+      res.status(200).json({ msg: '댓글이 작성되었습니다.' });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
+    }
   };
 
   updataComment = async (req: Request, res: Response, next: NextFunction) => {
-    const { commentId } = req.params;
-    const { userId } = res.locals.user;
-    const { comment } = req.body;
     try {
-      const isWriter = await Comments.findByComment(+commentId);
-
-      if (userId !== isWriter!.userId) {
-        throw new Error('수정 권한이 없습니다.');
-      }
-      const updateCommentData = await Comments.updateComment(
-        +commentId,
-        comment
-      );
-      res.status(200).json({ data: updateCommentData });
-    } catch (error) {
-      res.status(400).json();
+      await Comments.updateComment(req, res);
+      res.status(200).json({ msg: '댓글이 수정되었습니다.' });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
     }
   };
 
   deleteComment = async (req: Request, res: Response, next: NextFunction) => {
-    const { commentId } = req.params;
-    const { userId } = res.locals.user;
     try {
-      const isWriter = await Comments.findByComment(+commentId);
-
-      if (userId !== isWriter!.userId) {
-        throw new Error('삭제 권한이 없습니다.');
-      }
-      const deleteCommentData = await Comments.deleteComment(
-        +commentId,
-        userId
-      );
-      res.status(200).json({ msg: '삭제되었습니다.', data: deleteCommentData });
-    } catch (error) {
-      res.status(400).json();
+      
+      await Comments.deleteComment(req, res);
+      res.status(200).json({ msg: '삭제되었습니다.' });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
     }
   };
 }
