@@ -51,7 +51,7 @@ class App {
     });
     this.app.use(
       cors({
-        origin: 'http://localhost:3000',
+        origin: env.FRONT_END_URL,
         credentials: true,
       })
     );

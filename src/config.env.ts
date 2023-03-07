@@ -50,6 +50,7 @@ class Env extends dBConnection {
   HOST: string;
   ROOT_PATH: string;
   SRC_PATH: string;
+  FRONT_END_URL: string;
 
   PORT: number;
 
@@ -85,6 +86,7 @@ class Env extends dBConnection {
 
     this.ROOT_PATH = path.resolve('./');
     this.SRC_PATH = path.resolve(__dirname);
+    this.FRONT_END_URL = process.env.FRONT_END_URL!;
 
     this.CA_FULL_CHAIN = process.env.CA_FULL_CHAIN!;
     this.KEY_PRIVKEY = process.env.KEY_PRIVKEY!;
