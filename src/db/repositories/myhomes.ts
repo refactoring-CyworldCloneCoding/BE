@@ -1,54 +1,50 @@
 import { Users, MyhomeCounts, Myhomes } from '../models';
 import { TodayForm } from '../../interfaces/myHome';
 
-interface MyhomeCreateForm {
-  userId: number;
-  intro: string;
-  today: number;
-  total: number;
-}
-
 class MyhomesRepositories extends Myhomes {
   constructor() {
     super();
   }
   createNewMyhome = async (userId: number) => {
-    const createForm: MyhomeCreateForm = {
+    const saveMyhome = Myhomes.create({
       userId,
       intro: '',
       today: 0,
       total: 0,
-    };
-    await Myhomes.create(createForm);
+    });
+    return await Myhomes.save(saveMyhome);
   };
 
   findUserMyhome = async (userId: number) => {
     return await Myhomes.findOne({
       where: { userId },
-      include: [
-        {
-          model: Users,
-          attributes: { exclude: ['password'] },
-        },
-      ],
+      // include: [
+      //   {
+      //     model: Users,
+      //     attributes: { exclude: ['password'] },
+      //   },
+      // ],
     });
   };
 
   findByMyhome = async (myhomeId: number) => {
     return await Myhomes.findOne({
       where: { myhomeId },
-      include: [
-        {
-          model: Users,
-          attributes: { exclude: ['password'] },
-        },
-      ],
+      // include: [
+      //   {
+      //     model: Users,
+      //     attributes: { exclude: ['password'] },
+      //   },
+      // ],
     });
   };
 
   findMaxHome = async () => {
-    return Myhomes.findOne({
-      order: [['myhomeId', 'desc']],
+    const myhomes = await Myhomes.find();
+    const myhomeMaxId = myhomes[myhomes.length - 1].myhomeId;
+    return await Myhomes.findOne({
+      where: { myhomeId: myhomeMaxId },
+      // order: [['myhomeId', 'desc']],
     });
   };
 
@@ -57,13 +53,26 @@ class MyhomesRepositories extends Myhomes {
   };
 
   createTodayTotal = async ({ myhomeId, ip, time }: TodayForm) => {
-    if (myhomeId) await MyhomeCounts.create({ myhomeId, ip, time });
-    await Myhomes.increment({ today: 1, total: 1 }, { where: { myhomeId } });
+    if (myhomeId) {
+      const newMyhomeCount = MyhomeCounts.create({ myhomeId, ip, time });
+      await MyhomeCounts.save(newMyhomeCount);
+    }
+    const findMyhome = await Myhomes.findOne({ where: { myhomeId } });
+    findMyhome.today++;
+    findMyhome.total++;
+    await Myhomes.save(findMyhome);
   };
 
   todayTotalCount = async ({ ip, time, myhomeId }: TodayForm) => {
-    await MyhomeCounts.update({ time }, { where: { ip, myhomeId } });
-    await Myhomes.increment({ today: 1, total: 1 }, { where: { myhomeId } });
+    const findMyhomeCountTable = await MyhomeCounts.findOne({
+      where: { ip, myhomeId },
+    });
+    findMyhomeCountTable.time = time;
+    await MyhomeCounts.save(findMyhomeCountTable);
+    const findMyhome = await Myhomes.findOne({ where: { myhomeId } });
+    findMyhome.today++;
+    findMyhome.total++;
+    await Myhomes.save(findMyhome);
   };
 
   // newTodayTotal = async ({ ip, time, myhomeId }: TodayForm) => {
@@ -73,11 +82,10 @@ class MyhomesRepositories extends Myhomes {
   // };
 
   introUpdate = async (myhomeId: number, intro: string) => {
-    const introupdate = await Myhomes.update(
-      { intro },
-      { where: { myhomeId } }
-    );
-    return introupdate;
+    const findMyhome = await Myhomes.findOne({where:{myhomeId}});
+    findMyhome.intro = intro;
+    await Myhomes.save(findMyhome);
+    return findMyhome;
   };
 }
 
