@@ -5,7 +5,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
+import { Users } from './users';
 
 @Entity()
 export class Myhomes extends BaseEntity {
@@ -29,6 +31,9 @@ export class Myhomes extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToOne((type) => Users, (user) => user.myhome, { eager: false })
+  user: Users;
 }
 
 // import {

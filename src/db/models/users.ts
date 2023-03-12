@@ -6,7 +6,9 @@ import {
   Unique,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
+import { Myhomes } from './myhomes';
 
 @Entity()
 @Unique(['email'])
@@ -35,8 +37,8 @@ export class Users extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // @OneToMany((type) => Board, (board) => board.user, { eager: true })
-  // boards: Board[];
+  @OneToOne((type) => Myhomes, (myhome) => myhome.user, { eager: true })
+  myhome: Myhomes;
 
   // async validatePassword(password: string): Promise<boolean> {
   //   const isValid: boolean = await bcrypt.compare(password, this.password);
