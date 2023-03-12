@@ -4,7 +4,7 @@ import * as models from '../models';
 
 export const typeORMConfig = new DataSource({
   type: 'mysql',
-  host: env.DB_NAME,
+  host: env.DB_HOST,
   port: 3306,
   username: env.DB_USER,
   password: env.DB_PASSWORD,
