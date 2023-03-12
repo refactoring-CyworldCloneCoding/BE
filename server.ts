@@ -2,7 +2,7 @@ import fs from 'fs';
 import HTTPS from 'https';
 import App from './src/app';
 import env from './src/config.env';
-import { typeORMConfig } from 'src/db/config/connection';
+import { typeORMConfig } from './src/db/config/connection';
 // import associate from './src/db/config/associate';
 
 const port = env.PORT;
