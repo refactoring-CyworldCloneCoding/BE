@@ -1,5 +1,5 @@
 import { CreateCommentsForm } from '../../interfaces/comment';
-import { Comments } from '../models';
+import { Comments, Diaries } from '../models';
 
 class CommentRepository {
   findAllComment = async (myhomeId: number, diaryId: number) => {
@@ -16,6 +16,7 @@ class CommentRepository {
       myhomeId: createForm.myhomeId,
       name: createForm.name,
       comment: createForm.comment,
+      diary: await Diaries.findOne({ where: { diaryId: createForm.diaryId } }),
     });
     await Comments.save(commentInfo);
   };

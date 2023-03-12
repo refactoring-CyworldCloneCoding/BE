@@ -32,10 +32,10 @@ class DiaryService {
 
     const file = req.file as Express.MulterS3.File;
 
-    const imageFileName = file ? file.key : undefined;
+    const imageFileName = file ? file.key : null;
     const dirImg = imageFileName
       ? env.S3_STORAGE_URL + imageFileName
-      : undefined;
+      : null;
 
     const createDiary: CreateDiaryForm = {
       myhomeId: +myhomeId,
