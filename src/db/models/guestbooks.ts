@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
+import { Myhomes } from './myhomes';
 import { Users } from './users';
 
 @Entity()
@@ -40,4 +41,7 @@ export class Guestbooks extends BaseEntity {
 
   @ManyToOne(() => Users, (user) => user.guestbooks)
   user: Users;
+
+  @ManyToOne(() => Myhomes, (myhome) => myhome.guestbooks)
+  myhome: Myhomes;
 }

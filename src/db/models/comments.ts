@@ -8,6 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Diaries } from './diaries';
+import { Myhomes } from './myhomes';
 import { Users } from './users';
 
 @Entity()
@@ -41,4 +42,7 @@ export class Comments extends BaseEntity {
 
   @ManyToOne(() => Users, (user) => user.comments)
   user: Diaries;
+
+  @ManyToOne(() => Myhomes, (myhome) => myhome.comments)
+  myhome: Myhomes;
 }
