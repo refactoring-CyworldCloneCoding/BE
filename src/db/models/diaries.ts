@@ -7,8 +7,10 @@ import {
   UpdateDateColumn,
   OneToMany,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Comments } from './comments';
+import { Users } from './users';
 
 @Entity()
 export class Diaries extends BaseEntity {
@@ -38,5 +40,8 @@ export class Diaries extends BaseEntity {
 
   @OneToMany(() => Comments, (comments) => comments.diary)
   @JoinColumn()
-  comment: Comments;
+  comments: Comments[];
+
+  @ManyToOne(() => Users, (user) => user.diaries)
+  user: Users;
 }

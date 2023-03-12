@@ -7,7 +7,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
+import { Comments } from './comments';
+import { Diaries } from './diaries';
+import { Guestbooks } from './guestbooks';
+import { Ilchonpyungs } from './ilchonpyungs';
 import { Myhomes } from './myhomes';
 // import bcrypt from 'bcrypt';
 
@@ -40,6 +45,18 @@ export class Users extends BaseEntity {
 
   @OneToOne(() => Myhomes, (myhome) => myhome.user)
   myhome: Myhomes;
+
+  @OneToMany(() => Diaries, (diaries) => diaries.user)
+  diaries: Diaries[];
+
+  @OneToMany(() => Comments, (comments) => comments.user)
+  comments: Comments[];
+
+  @OneToMany(() => Ilchonpyungs, (ilchonpyungs) => ilchonpyungs.user)
+  ilchonpyungs: Ilchonpyungs[];
+
+  @OneToMany(() => Guestbooks, (guestbooks) => guestbooks.user)
+  guestbooks: Guestbooks[];
 
   // async validatePassword(password: string): Promise<boolean> {
   //   const isValid: boolean = await bcrypt.compare(password, this.password);

@@ -8,6 +8,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Diaries } from './diaries';
+import { Users } from './users';
 
 @Entity()
 export class Comments extends BaseEntity {
@@ -35,6 +36,9 @@ export class Comments extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Diaries, (diaries) => diaries.comment)
+  @ManyToOne(() => Diaries, (diaries) => diaries.comments)
   diary: Diaries;
+
+  @ManyToOne(() => Users, (user) => user.comments)
+  user: Diaries;
 }
