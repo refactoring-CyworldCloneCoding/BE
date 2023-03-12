@@ -5,7 +5,13 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  JoinColumn,
+  ManyToOne,
 } from 'typeorm';
+import { Comments } from './comments';
+import { Myhomes } from './myhomes';
+import { Users } from './users';
 
 @Entity()
 export class Diaries extends BaseEntity {
@@ -24,7 +30,7 @@ export class Diaries extends BaseEntity {
   @Column()
   content: string;
 
-  @Column()
+  @Column({ nullable: true, default: true })
   dirImg: string;
 
   @CreateDateColumn()
@@ -32,87 +38,14 @@ export class Diaries extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Comments, (comments) => comments.diary)
+  @JoinColumn()
+  comments: Comments[];
+
+  @ManyToOne(() => Users, (user) => user.diaries)
+  user: Users;
+
+  @ManyToOne(() => Myhomes, (myhome) => myhome.diaries)
+  myhome: Myhomes;
 }
-
-// import {
-//   Model,
-//   DataTypes,
-//   InferAttributes,
-//   CreationOptional,
-//   InferCreationAttributes,
-// } from 'sequelize';
-// import sequelize from '../config/connection';
-// import { Myhomes, Comments, Users } from '.';
-
-// class Diaries extends Model<
-//   InferAttributes<Diaries>,
-//   InferCreationAttributes<Diaries>
-// > {
-//   declare diaryId: CreationOptional<number>;
-//   declare userId: number;
-//   declare myhomeId: number;
-//   declare diaryNo: number;
-//   declare content: string;
-//   declare dirImg: string | null | undefined;
-//   declare createdAt: CreationOptional<Date>;
-//   declare updatedAt: CreationOptional<Date>;
-
-//   static associate() {
-//     this.belongsTo(Users, { foreignKey: 'userId' });
-//     this.belongsTo(Myhomes, { foreignKey: 'myhomeId' });
-//     this.hasMany(Comments, {
-//       sourceKey: 'diaryId',
-//       foreignKey: 'diaryId',
-//     });
-//   }
-// }
-
-// Diaries.init(
-//   {
-//     diaryId: {
-//       type: DataTypes.INTEGER.UNSIGNED,
-//       allowNull: false, // NOT NULL, Null을 허용하지 않음
-//       autoIncrement: true, // AUTO_INCREMENT
-//       primaryKey: true, // PRIMARY KEY, 기본키
-//       unique: true,
-//     },
-//     myhomeId: {
-//       type: DataTypes.INTEGER.UNSIGNED,
-//       allowNull: false,
-//       references: {
-//         model: 'Myhomes',
-//         key: 'myhomeId',
-//       },
-//       onDelete: 'cascade',
-//     },
-//     userId: {
-//       type: DataTypes.INTEGER.UNSIGNED,
-//       allowNull: false,
-//       references: {
-//         model: 'Users',
-//         key: 'userId',
-//       },
-//       onDelete: 'cascade',
-//     },
-//     diaryNo: {
-//       type: DataTypes.INTEGER.UNSIGNED,
-//       allowNull: false,
-//     },
-//     content: {
-//       type: DataTypes.STRING(100),
-//       allowNull: false,
-//     },
-//     dirImg: {
-//       type: DataTypes.STRING(100),
-//       allowNull: true,
-//     },
-//     createdAt: DataTypes.DATE,
-//     updatedAt: DataTypes.DATE,
-//   },
-//   {
-//     sequelize,
-//     modelName: 'Diaries',
-//   }
-// );
-
-// export default Diaries;
