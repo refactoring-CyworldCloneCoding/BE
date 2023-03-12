@@ -2,8 +2,8 @@ import fs from 'fs';
 import HTTPS from 'https';
 import App from './src/app';
 import env from './src/config.env';
-import sequelize from './src/db/config/connection';
-import associate from './src/db/config/associate';
+import { typeORMConfig } from './src/db/config/connection';
+// import associate from './src/db/config/associate';
 
 const port = env.PORT;
 
@@ -30,17 +30,17 @@ if (env.NODE_ENV == 'production') {
   });
 }
 
-function dbConnect(){
+function dbConnect() {
   if (env.NODE_ENV !== 'test') {
-    sequelize
-      .authenticate()
+    typeORMConfig
+      .initialize()
       .then(() => {
-        associate();
-        console.log('DB CONNECTED');
+        // associate();
+        console.log('Data Source has been initialized successfully.');
       })
       .catch((error) => {
         console.error(error);
-        console.log('DB CONNECTION FAIL');
+        console.log('Error during Data Source initialization:');
 
         process.exit(0);
       });

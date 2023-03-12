@@ -3,7 +3,8 @@ import { CreateIlchonpyungForm } from '../../interfaces/Ilchonpyung';
 
 class IlchonpyungsRepository {
   createBest = async (CreateForm: CreateIlchonpyungForm) => {
-    await Ilchonpyungs.create(CreateForm);
+    const ilchonpyungInfo = Ilchonpyungs.create(CreateForm);
+    await Ilchonpyungs.save(ilchonpyungInfo);
   };
 
   findByWriter = async (userId: number, myhomeId: number) => {
@@ -14,9 +15,9 @@ class IlchonpyungsRepository {
 
   // 일촌평 목록 조회 시 ilchonpyungId 기준 내림차순 조회
   getBests = async (myhomeId: number) => {
-    return await Ilchonpyungs.findAll({
+    return await Ilchonpyungs.find({
       where: { myhomeId },
-      order: [['ilchonpyungId', 'desc']],
+      // order: [['ilchonpyungId', 'desc']],
     });
   };
 
@@ -32,16 +33,19 @@ class IlchonpyungsRepository {
     ilchonpyung,
     nick,
   }: CreateIlchonpyungForm) => {
-    await Ilchonpyungs.update(
-      { ilchonpyung, nick },
-      { where: { ilchonpyungId, userId } }
-    );
+    const ilchonpyungInfo = await Ilchonpyungs.findOne({
+      where: { ilchonpyungId },
+    });
+    ilchonpyungInfo.ilchonpyung = ilchonpyung;
+    await Ilchonpyungs.save(ilchonpyungInfo);
+    // await Ilchonpyungs.update(
+    //   { ilchonpyung, nick },
+    //   { where: { ilchonpyungId, userId } }
+    // );
   };
 
   deleteBest = async (ilchonpyungId: number, myhomeId: number) => {
-    await Ilchonpyungs.destroy({
-      where: { ilchonpyungId, myhomeId },
-    });
+    await Ilchonpyungs.delete({ ilchonpyungId, myhomeId });
   };
 }
 

@@ -6,17 +6,16 @@ class UsersRepositories extends Users {
     super();
   }
   createUser = async (user: UserInfo) => {
-    return await Users.create(user);
+    const userInfo = Users.create(user);
+    return await Users.save(userInfo);
   };
 
   findOneId = async (userId: number) => {
-    const findOneId = await Users.findOne({ where: { userId } });
-    return findOneId;
+    return await Users.findOne({ where: { userId } });
   };
 
   findOneEmail = async (email: string) => {
-    const findOneEmail = await Users.findOne({ where: { email } });
-    return findOneEmail;
+    return await Users.findOne({ where: { email } });
   };
 
   // findById = async (userId: number, email: string) => {
@@ -35,16 +34,19 @@ class UsersRepositories extends Users {
   // ----------------------------------------------------------------
 
   findMaxUser = async () => {
-    return Users.findOne({
-      order: [['userId', 'desc']],
+    const users = await Users.find();
+    const userMaxId = users[users.length - 1].userId;
+    return await Users.findOne({
+      where: { userId: userMaxId },
+      // order: [['userId', 'desc']],
     });
   };
 
   findByUser = async (userId: number) => {
     return Users.findOne({
-      attributes: {
-        exclude: ['password'],
-      },
+      // attributes: {
+      //   exclude: ['password'],
+      // },
       where: { userId },
     });
   };

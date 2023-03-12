@@ -51,7 +51,7 @@ class App {
     });
     this.app.use(
       cors({
-        origin: env.FRONT_END_URL,
+        origin: [env.FRONT_END_URL],
         credentials: true,
       })
     );

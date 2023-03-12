@@ -3,32 +3,41 @@ import { Guestbooks } from '../models';
 
 class GuestBooksRepository {
   createBook = async (CreateForm: GuestBooksCreateForm) => {
-    await Guestbooks.create(CreateForm);
+    const createInfo = Guestbooks.create({
+      myhomeId: CreateForm.myhomeId,
+      userId: CreateForm.userId,
+      guestBookNum: 0,
+      name: CreateForm.name,
+      guestBook: CreateForm.guestBook,
+      bookImage: CreateForm.bookImage,
+    });
+    await Guestbooks.save(createInfo);
   };
 
   // 방명록 조회시 guestbookId 기준 내림차순으로 조회
   getBooks = async (myhomeId: number) => {
-    return await Guestbooks.findAll({
+    return await Guestbooks.find({
       where: { myhomeId },
       // order: [['guestbookId', 'desc']],
     });
   };
 
   findByGuestBook = async (guestbookId: number) => {
-    return await Guestbooks.findByPk(guestbookId);
+    return await Guestbooks.findOne({ where: { guestbookId } });
   };
 
   updateBook = async (guestbook: string, guestbookId: number) => {
-    await Guestbooks.update(
-      { guestBook: guestbook },
-      { where: { guestbookId } }
-    );
+    const guestbookInfo = await Guestbooks.findOne({ where: { guestbookId } });
+    guestbookInfo.guestBook = guestbook;
+    await Guestbooks.save(guestbookInfo);
+    // await Guestbooks.update(
+    //   { guestBook: guestbook },
+    //   { where: { guestbookId } }
+    // );
   };
 
   deleteBook = async (guestbookId: number) => {
-    await Guestbooks.destroy({
-      where: { guestbookId },
-    });
+    await Guestbooks.delete(guestbookId);
   };
 
   // findByUser = async (userId) => {
