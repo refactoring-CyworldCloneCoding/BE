@@ -11,6 +11,7 @@ class MyhomesRepositories extends Myhomes {
       intro: '',
       today: 0,
       total: 0,
+      user: await Users.findOne({ where: { userId } }),
     });
     return await Myhomes.save(saveMyhome);
   };
@@ -18,22 +19,15 @@ class MyhomesRepositories extends Myhomes {
   findUserMyhome = async (userId: number) => {
     return await Myhomes.findOne({
       where: { userId },
-      // include: [
-      //   {
-      //     model: Users,
-      //     attributes: { exclude: ['password'] },
-      //   },
-      // ],
+      relations: { user: true },
     });
   };
 
   findByMyhome = async (myhomeId: number) => {
-    const query = Myhomes.createQueryBuilder('myhomes');
-
-    query.where('myhomes.userId = :userId', { userId: myhomeId });
-
-    const myhome = await query.getOne();
-    return myhome;
+    return await Myhomes.findOne({
+      where: { myhomeId },
+      relations: { user: true },
+    });
   };
 
   findMaxHome = async () => {
