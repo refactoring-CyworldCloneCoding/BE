@@ -28,15 +28,12 @@ class MyhomesRepositories extends Myhomes {
   };
 
   findByMyhome = async (myhomeId: number) => {
-    return await Myhomes.findOne({
-      where: { myhomeId },
-      // include: [
-      //   {
-      //     model: Users,
-      //     attributes: { exclude: ['password'] },
-      //   },
-      // ],
-    });
+    const query = Myhomes.createQueryBuilder('myhomes');
+
+    query.where('myhomes.userId = :userId', { userId: myhomeId });
+
+    const myhome = await query.getOne();
+    return myhome;
   };
 
   findMaxHome = async () => {
@@ -82,7 +79,7 @@ class MyhomesRepositories extends Myhomes {
   // };
 
   introUpdate = async (myhomeId: number, intro: string) => {
-    const findMyhome = await Myhomes.findOne({where:{myhomeId}});
+    const findMyhome = await Myhomes.findOne({ where: { myhomeId } });
     findMyhome.intro = intro;
     await Myhomes.save(findMyhome);
     return findMyhome;

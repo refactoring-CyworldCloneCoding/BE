@@ -10,12 +10,12 @@ class DiaryService {
     const allDiary = await Diaries.findAllDiary(myhomeId);
 
     for (let i = 0; i < allDiary.length; i++) {
-      allDiary[i].dataValues.diaryNo = i + 1;
+      allDiary[i].diaryNo = i + 1;
     }
 
     // 호출한 Diary들 중 가장 최근 게시글순으로 정렬
     return allDiary.sort((a, b) => {
-      return b.dataValues.diaryNo - a.dataValues.diaryNo;
+      return b.diaryNo - a.diaryNo;
     });
   };
 
