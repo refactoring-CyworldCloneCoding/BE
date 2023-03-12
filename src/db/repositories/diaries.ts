@@ -6,14 +6,14 @@ class DiaryRepository {
     // 다양한 유저들이 존재해서 해당 유저가 작성한 게시글이 필요함
     return await Diaries.find({
       where: { myhomeId },
-      relations: { comment: true },
+      relations: { comments: true },
     });
   };
 
   findOneDiary = async (diaryId: number) => {
     return await Diaries.findOne({
       where: { diaryId },
-      relations: { comment: true },
+      relations: { comments: true },
     });
   };
 
