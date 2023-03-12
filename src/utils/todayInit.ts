@@ -2,7 +2,11 @@ import { Myhomes } from '../db/models';
 
 class TodayInits {
   myhomesTodayInit = async () => {
-    await Myhomes.update({ today: 0 }, { where: {} });
+    const findAllMyhomes = await Myhomes.find();
+    findAllMyhomes.forEach(async (myhome) => {
+      myhome.today = 0;
+      await Myhomes.save(myhome);
+    });
   };
 
   is2AM = () => {

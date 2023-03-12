@@ -8,7 +8,6 @@ export default {
 
     try {
       const { accesstoken, refreshtoken } = req.headers;
-      // const { accesstoken, refreshtoken }: TokenInfo = req.cookies;
       if (!accesstoken || !refreshtoken) throw invalidError;
       if (
         accesstoken === undefined ||
@@ -51,7 +50,6 @@ export default {
   tokenChecker: (req: Request, res: Response, next: NextFunction) => {
     try {
       const { accesstoken, refreshtoken } = req.headers;
-      // const { accesstoken, refreshtoken } = req.cookies;
 
       if (accesstoken && refreshtoken) {
         const error = new Error('이미 로그인이 되어있습니다.');
@@ -68,27 +66,4 @@ export default {
       });
     }
   },
-
-  // tempAuth: (req: Request, res: Response, next: NextFunction) => {
-  //     const key = req.query.id;
-  //     switch (Number(key)) {
-  //         case 1:
-  //             req.app.locals.user = { userId: 1, nickname: "BOSS" };
-  //             break;
-  //         case 2:
-  //             req.app.locals.user = { userId: 2, nickname: "root" };
-  //             break;
-  //         case 3:
-  //             req.app.locals.user = { userId: 3, nickname: "mysql" };
-  //             break;
-  //         case 4:
-  //             req.app.locals.user = { userId: 4, nickname: "test" };
-  //             break;
-  //         case 5:
-  //             req.app.locals.user = { userId: 5, nickname: "sparta" };
-  //             break;
-  //     }
-
-  //     return next();
-  // }
 };

@@ -3,7 +3,7 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 import { s3 } from '../db/config/s3';
 import env from '../config.env';
-import { Diaries } from '../db/models';
+import { Diaries } from '../db/repositories';
 
 class S3ImageController {
   upload = multer({
@@ -26,7 +26,7 @@ class S3ImageController {
   delete_file = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { diaryId } = req.params;
-      const imgName = await Diaries.findOne({ where: { diaryId } });
+      const imgName = await Diaries.findOneDiary(+diaryId);
 
       if (imgName?.dirImg) {
         const s3ImgName = imgName.dirImg!.split('/').pop();
