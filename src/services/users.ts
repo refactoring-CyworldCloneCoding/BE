@@ -1,8 +1,10 @@
 import { Request } from 'express';
 import { Myhomes, Users } from '../db/repositories';
-import {signJwt, verifyJwt} from '../utils/jwt';
+import { signJwt } from '../utils/jwt';
 import bcrypt from 'bcrypt';
-import { PayloadI, UserInfo } from '../interfaces/user';
+import { UserInfo } from '../interfaces/user';
+import AppError from '../utils/appError';
+import redis from '../db/cache/redis';
 
 export default {
   createUser: async (user: UserInfo) => {
@@ -23,27 +25,50 @@ export default {
     if (!user) throw new Error('가입하신 회원이 아닙니다.');
 
     const isEqual = await bcrypt.compare(password, user.password);
-    if (!isEqual) throw new Error('비밀번호가 다릅니다.');
+    if (!isEqual) throw new AppError('Invalid email or password', 401);
 
     const findMyhome = await Myhomes.findUserMyhome(user.userId);
 
-    const payload: PayloadI = {
-      myhomeId: findMyhome!.myhomeId,
-      userId: user.userId,
-      name: user.name,
-      gender: user.gender
-    };
+    // Sign the access token
+    const access_token = signJwt({ sub: user.userId });
 
-    const accesstoken = signJwt(payload);
-    const refreshtoken = signJwt(payload);
-    // await Users.updateRefresh(refreshtoken, user);
+    // Sign the refresh token
+    const refresh_token = signJwt({ sub: user.userId });
+    // Create a Session
+    redis.set(user.userId, JSON.stringify(user), {
+      EX: 60 * 60 * 24,
+    });
 
-    return {
-      accesstoken: 'Bearer ' + accesstoken,
-      refreshtoken: 'Bearer ' + refreshtoken,
-      ...payload,
-    };
+    // Return access token
+    return { access_token, refresh_token, myhomeId: findMyhome.myhomeId };
   },
+
+  // userLogin: async (email: string, password: string) => {
+  //   const user = await Users.findOneEmail(email);
+  //   if (!user) throw new Error('가입하신 회원이 아닙니다.');
+
+  //   const isEqual = await bcrypt.compare(password, user.password);
+  //   if (!isEqual) throw new Error('비밀번호가 다릅니다.');
+
+  //   const findMyhome = await Myhomes.findUserMyhome(user.userId);
+
+  //   const payload: PayloadI = {
+  //     myhomeId: findMyhome!.myhomeId,
+  //     userId: user.userId,
+  //     name: user.name,
+  //     gender: user.gender,
+  //   };
+
+  //   const accesstoken = signJwt(payload);
+  //   const refreshtoken = signJwt(payload);
+  //   // await Users.updateRefresh(refreshtoken, user);
+
+  //   return {
+  //     accesstoken: 'Bearer ' + accesstoken,
+  //     refreshtoken: 'Bearer ' + refreshtoken,
+  //     ...payload,
+  //   };
+  // },
 
   surfing: async () => {
     const maxMyhomeId = await Myhomes.findMaxHome();
@@ -141,4 +166,8 @@ export default {
   //   const { boop } = req.body;
   //   await Users.chargeCoupons();
   // };
+
+  findAllUsers: async () => {
+    return await Users.findAllUsers();
+  },
 };

@@ -1,13 +1,17 @@
 import env from '../config.env';
-import jwt, { SignOptions } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
-// import { JwtPayload } from 'jsonwebtoken';
+export const signJwt = (payload: Object = {}) => {
+  return jwt.sign(payload, env.JWT_KEY, {
+    expiresIn: 60 * 60 * 12,
+    algorithm: 'HS256',
+  });
+};
 
-export const signJwt = (payload: Object, options: SignOptions = {}) => {
-  const privateKey = Buffer.from(env.JWT_KEY, 'base64').toString('ascii');
-  return jwt.sign(payload, privateKey, {
-    ...(options && options),
-    algorithm: 'RS256',
+export const refresh = (payload: Object = {}) => {
+  return jwt.sign(payload, env.JWT_KEY, {
+    expiresIn: 60 * 60 * 24,
+    algorithm: 'HS256',
   });
 };
 
@@ -15,8 +19,7 @@ export const verifyJwt = <T>(
   token: string,
 ): T | null => {
   try {
-    const publicKey = Buffer.from(env.JWT_KEY, 'base64').toString('ascii');
-    return jwt.verify(token, publicKey) as T;
+    return jwt.verify(token, env.JWT_KEY) as T;
   } catch (error) {
     return null;
   }

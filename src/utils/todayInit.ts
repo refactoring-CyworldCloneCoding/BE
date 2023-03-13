@@ -16,7 +16,6 @@ class TodayInits {
 
   initStart = async () => {
     const interval = setInterval(async () => {
-      console.log('initStart!!!');
       if (this.is2AM()) {
         clearInterval(interval);
         await this.myhomesTodayInit();

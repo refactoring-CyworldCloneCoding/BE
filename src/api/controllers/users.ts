@@ -1,9 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { Users } from '../../services';
 import Joi from '../../utils/joi';
 import { UserInfo } from '../../interfaces/user';
-import passport from 'passport';
+// import passport from 'passport';
 import redis from '../../db/cache/redis';
+import { signJwt, verifyJwt } from '../../utils/jwt';
+import AppError from '../../utils/appError';
+
+// Cookie options
+const accessTokenCookieOptions: CookieOptions = {
+  expires: new Date(60 * 60 * 12),
+  maxAge: 60 * 60 * 12,
+  httpOnly: true,
+  sameSite: 'lax',
+};
+
+const refreshTokenCookieOptions: CookieOptions = {
+  expires: new Date(60 * 60 * 24),
+  maxAge: 60 * 60 * 24,
+  httpOnly: true,
+  sameSite: 'lax',
+};
+
+// Only set secure to true in production
+if (process.env.NODE_ENV === 'production')
+  accessTokenCookieOptions.secure = true;
 
 export default {
   signup: async (req: Request, res: Response, next: NextFunction) => {
@@ -35,41 +56,114 @@ export default {
       next(error);
     }
   },
+
   //로그인
   login: async (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('local', (authError, user, info) => {
-      if (authError) {
-        res.status(400).json({ msg: 'authError' });
-        return next(authError);
+    try {
+      // Get the user from the collection
+      const { email, password } = await Joi.loginSchema.validateAsync(req.body);
+
+      // Create the Access and refresh Tokens
+      const { access_token, refresh_token, myhomeId } = await Users.userLogin(
+        email,
+        password
+      );
+
+      // Send Access Token in Cookie
+      res.cookie('access_token', access_token, accessTokenCookieOptions);
+      res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
+      res.cookie('logged_in', true, {
+        ...accessTokenCookieOptions,
+        httpOnly: false,
+      });
+
+      // Send Access Token
+      res.status(200).json({
+        status: 'success',
+        access_token,
+        myhomeId,
+      });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
+    }
+  },
+
+  refreshAccessTokenHandler: async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      // Get the refresh token from cookie
+      const refresh_token = req.cookies.refresh_token as string;
+
+      // Validate the Refresh token
+      const decoded = verifyJwt<{ sub: string }>(refresh_token);
+      const message = 'Could not refresh access token';
+      if (!decoded) {
+        return next(new AppError(message, 403));
       }
 
-      if (!user) return res.status(400).json({ msg: info.message });
+      // Check if the user has a valid session
+      const session = await redis.get(decoded.sub);
+      if (!session) {
+        return next(new AppError(message, 403));
+      }
 
-      return req.login(user, async (loginError) => {
-        if (loginError) {
-          res.status(400).json({ msg: 'loginError' });
-          return next(loginError);
-        }
+      // Check if the user exist
+      const user = await Users.findUserMyhome(JSON.parse(session).userId);
 
-        const myhome = await Users.findUserMyhome(user.userId);
+      if (!user) {
+        return next(new AppError(message, 403));
+      }
 
-        return res.status(200).json({
-          myhomeId: myhome.myhomeId,
-          msg: '로그인에 성공하였습니다',
-        });
+      // Sign new access token
+      const access_token = signJwt({ sub: user.userId });
+
+      // Send the access token as cookie
+      res.cookie('access_token', access_token, accessTokenCookieOptions);
+      res.cookie('logged_in', true, {
+        ...accessTokenCookieOptions,
+        httpOnly: false,
       });
-    })(req, res, next);
-    // try {
-    //   const { email, password } = await Joi.loginSchema.validateAsync(req.body);
-    //   const user = await Users.userLogin(email, password);
-    //   res.cookie('accesstoken', user.accesstoken);
-    //   res.cookie('refreshtoken', user.refreshtoken);
-    //   res.status(200).json({ ...user, msg: '로그인에 성공하였습니다' });
-    // } catch (error: any) {
-    //   res.status(400).json({ msg: error.message });
-    //   next(error);
-    // }
+
+      // Send response
+      res.status(200).json({
+        status: 'success',
+        access_token,
+      });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
+    }
   },
+
+  // //로그인
+  // login: async (req: Request, res: Response, next: NextFunction) => {
+  //   passport.authenticate('local', (authError, user, info) => {
+  //     if (authError) {
+  //       res.status(400).json({ msg: 'authError' });
+  //       return next(authError);
+  //     }
+
+  //     if (!user) return res.status(400).json({ msg: info.message });
+
+  //     return req.login(user, async (loginError) => {
+  //       if (loginError) {
+  //         res.status(400).json({ msg: 'loginError' });
+  //         return next(loginError);
+  //       }
+
+  //       const myhome = await Users.findUserMyhome(user.userId);
+
+  //       return res.status(200).json({
+  //         myhomeId: myhome.myhomeId,
+  //         msg: '로그인에 성공하였습니다',
+  //       });
+  //     });
+  //   })(req, res, next);
+  // },
 
   logout: async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -162,4 +256,20 @@ export default {
   // next(error);
   // }
   // };
+
+  getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const users = await Users.findAllUsers();
+      res.status(200).json({
+        status: 'success',
+        result: users.length,
+        data: {
+          users,
+        },
+      });
+    } catch (error: any) {
+      res.status(400).json({ msg: error.message });
+      next(error);
+    }
+  },
 };

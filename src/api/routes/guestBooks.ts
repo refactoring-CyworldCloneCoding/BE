@@ -10,8 +10,8 @@ router
    * PUT : 해당 미니홈피의 방명록 수정,
    * DELETE : 해당 미니홈피의 방명록 삭제
    */
-  .put(auth.authMiddleware, Guestbooks.updateBook)
-  .delete(auth.authMiddleware, Guestbooks.deleteBook);
+  .put(auth.isNotLoggedIn, Guestbooks.updateBook)
+  .delete(auth.isNotLoggedIn, Guestbooks.deleteBook);
 
 router
   .route('/:myhomeId')
@@ -19,7 +19,7 @@ router
    * POST : 해당 미니홈피의 방명록 작성,
    * GET : 해당 미니홈피의 방명록 조회
    */
-  .post(auth.authMiddleware, Guestbooks.createBook)
+  .post(auth.isNotLoggedIn, Guestbooks.createBook)
   .get(Guestbooks.getBooks);
 
 export default router;
