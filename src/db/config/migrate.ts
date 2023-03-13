@@ -1,4 +1,4 @@
-import sequelize from './connection';
+// import typeORMConfig from './connection';
 import * as models from '../models';
 
 (async () => {
@@ -13,5 +13,5 @@ import * as models from '../models';
     await model.sync();
   }
 
-  await sequelize.close();
+  // await typeORMConfig.close();
 })();

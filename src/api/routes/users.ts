@@ -1,15 +1,17 @@
 import { Router } from 'express';
 import { Users } from '../controllers';
 import auth from '../../middlewares/auth';
+import * as test from '../../db/models';
 
 const router = Router();
 
 router.get('/', async (req, res, next) => {
-    try {
-        res.status(200).send('USERS ROUTE SUCCESE')
-    } catch (error) {
-        next(error)
-    }
+  try {
+    const users = await test.Users.find();
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post('/signup', auth.tokenChecker, Users.signup);
