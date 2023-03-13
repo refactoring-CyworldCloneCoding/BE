@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from '../utils/jwt';
+import { signJwt, verifyJwt } from '../utils/jwt';
 import { JwtPayload } from 'jsonwebtoken';
 
 export default {
@@ -19,18 +19,18 @@ export default {
       const [tokenType, accessToken] = accesstoken.split(' ');
       if (tokenType !== 'Bearer') throw invalidError;
 
-      const payload: JwtPayload | string | null = jwt.verify(accessToken);
+      const payload: JwtPayload | string | null = verifyJwt(accessToken);
       if (payload === null) {
         console.log('INVALID ACCESSTOKEN');
 
-        const refreshCheck = jwt.refreshVerify(refreshtoken);
+        const refreshCheck = verifyJwt(refreshtoken);
         if (refreshCheck === null) throw invalidError;
 
         const payload: JwtPayload = req.session.cookie!;
         if (payload === undefined) throw invalidError;
 
         req.app.locals.user = payload;
-        const newAccessToken = jwt.sign(payload);
+        const newAccessToken = signJwt(payload);
 
         res.set('accesstoken', 'Bearer ' + newAccessToken);
         return next();

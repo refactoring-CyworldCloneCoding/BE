@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { Users } from '../controllers';
 import auth from '../../middlewares/auth';
 import * as test from '../../db/models';
+import { isLoggedIn, isNotLoggedIn } from '../../middlewares/testMiddleware';
 
 const router = Router();
 
@@ -14,8 +15,9 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.post('/signup', auth.tokenChecker, Users.signup);
-router.post('/login', auth.tokenChecker, Users.login);
+router.post('/signup', isNotLoggedIn, Users.signup);
+router.post('/login', isNotLoggedIn, Users.login);
+router.get('/logout',isLoggedIn, Users.logout);
 router.post('/emailcheck', Users.emailCheck);
 router.get('/surfing', Users.surfing);
 router.get('/:myhomeId', Users.myhome);

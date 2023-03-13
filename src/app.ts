@@ -7,9 +7,10 @@ import cors from 'cors';
 import env from './config.env';
 import router from './api/routes/index';
 import todayInit from './utils/todayInit';
+import passport from 'passport';
 
-// import passportConfig from './passport';
-// passportConfig();
+import passportConfig from './passport';
+passportConfig();
 
 todayInit.initStart();
 
@@ -30,7 +31,7 @@ class App {
     this.app.use(error.logger, error.handler);
     this.app.use(
       session({
-        resave: true,
+        resave: false,
         saveUninitialized: false,
         secret: env.SESSION_KEY,
         cookie: {
@@ -39,6 +40,8 @@ class App {
         },
       })
     );
+    this.app.use(passport.initialize());
+    this.app.use(passport.session());
     this.app.use((req, res, next) => {
       res.set({
         'Access-Control-Allow-Origin': req.headers.origin,

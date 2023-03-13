@@ -1,17 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { Users } from '../../services';
 import Joi from '../../utils/joi';
-import bcrypt from 'bcrypt';
 import { UserInfo } from '../../interfaces/user';
+import passport from 'passport';
+import redis from '../../db/cache/redis';
 
 export default {
   signup: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, name, password, confirm, gender, birth } =
         await Joi.signupSchema.validateAsync(req.body);
-
-      if (!email || !name || !password || !confirm || !gender || !birth)
-        throw new Error('형식을 확인해주세요.');
 
       if (password !== confirm)
         throw new Error('비밀번호가 일치하지 않습니다.');
@@ -22,11 +20,10 @@ export default {
       if (name.includes(password) || password.includes(name))
         throw new Error('이름과 비밀번호를 다른형식으로 설정해주세요.');
 
-      const hashed = await bcrypt.hash(password, 10);
       const users: UserInfo = {
         email,
         name,
-        password: hashed,
+        password,
         gender,
         birth,
       };
@@ -40,13 +37,50 @@ export default {
   },
   //로그인
   login: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email, password } = await Joi.loginSchema.validateAsync(req.body);
-      const user = await Users.userLogin(email, password);
+    passport.authenticate('local', (authError, user, info) => {
+      if (authError) {
+        res.status(400).json({ msg: 'authError' });
+        return next(authError);
+      }
 
-      res.cookie('accesstoken', user.accesstoken);
-      res.cookie('refreshtoken', user.refreshtoken);
-      res.status(200).json({ ...user, msg: '로그인에 성공하였습니다' });
+      if (!user) return res.status(400).json({ msg: info.message });
+
+      return req.login(user, async (loginError) => {
+        if (loginError) {
+          res.status(400).json({ msg: 'loginError' });
+          return next(loginError);
+        }
+
+        const myhome = await Users.findUserMyhome(user.userId);
+
+        return res.status(200).json({
+          myhomeId: myhome.myhomeId,
+          msg: '로그인에 성공하였습니다',
+        });
+      });
+    })(req, res, next);
+    // try {
+    //   const { email, password } = await Joi.loginSchema.validateAsync(req.body);
+    //   const user = await Users.userLogin(email, password);
+    //   res.cookie('accesstoken', user.accesstoken);
+    //   res.cookie('refreshtoken', user.refreshtoken);
+    //   res.status(200).json({ ...user, msg: '로그인에 성공하였습니다' });
+    // } catch (error: any) {
+    //   res.status(400).json({ msg: error.message });
+    //   next(error);
+    // }
+  },
+
+  logout: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { user } = res.app.locals;
+      await redis.del(user.userId);
+      res.cookie('access_token', '', { maxAge: 1 });
+      res.cookie('refresh_token', '', { maxAge: 1 });
+      res.cookie('logged_in', '', {
+        maxAge: 1,
+      });
+      res.status(400).json({ msg: '로그아웃 되었습니다.' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);

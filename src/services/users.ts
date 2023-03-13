@@ -1,15 +1,17 @@
 import { Request } from 'express';
 import { Myhomes, Users } from '../db/repositories';
-import jwt from '../utils/jwt';
+import {signJwt, verifyJwt} from '../utils/jwt';
 import bcrypt from 'bcrypt';
 import { PayloadI, UserInfo } from '../interfaces/user';
 
 export default {
-  createUser: async (users: UserInfo) => {
-    users.email += '@cyworld.com';
+  createUser: async (user: UserInfo) => {
+    const hashed = await bcrypt.hash(user.password, 10);
+    user.email += '@cyworld.com';
+    user.password = hashed;
 
-    const user = await Users.createUser(users);
-    await Myhomes.createNewMyhome(user.userId);
+    const findUserId = await Users.createUser(user);
+    await Myhomes.createNewMyhome(findUserId.userId);
   },
 
   emailDuplicates: async (email: string) => {
@@ -32,8 +34,8 @@ export default {
       gender: user.gender
     };
 
-    const accesstoken = jwt.sign(payload);
-    const refreshtoken = jwt.refresh();
+    const accesstoken = signJwt(payload);
+    const refreshtoken = signJwt(payload);
     // await Users.updateRefresh(refreshtoken, user);
 
     return {
@@ -88,8 +90,8 @@ export default {
     return await Myhomes.findByMyhome(myhomeId);
   },
 
-  findUserMyhome: async (userId: number) => {
-    return await Myhomes.findUserMyhome(userId);
+  findUserMyhome: (userId: number) => {
+    return Myhomes.findUserMyhome(userId);
   },
 
   introupdate: async (myhomeId: number, intro: string) => {
