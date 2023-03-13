@@ -50,6 +50,10 @@ class UsersRepositories extends Users {
     });
   };
 
+  findAllUsers = async () => {
+    return Users.find();
+  }
+
   // chargeDotori = async (userId, price) => {
   //   const isDotori = await this.findByUser(userId);
   //   if (isDotori.dotori === null)

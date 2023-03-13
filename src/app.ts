@@ -1,78 +1,101 @@
-import express, { Express } from 'express';
-import helmet from 'helmet';
-import error from './middlewares/errorhandlers';
-import session from 'express-session';
-import cookieParser from 'cookie-parser';
+import express, { NextFunction, Request, Response } from 'express';
+import morgan from 'morgan';
 import cors from 'cors';
-import env from './config.env';
+import cookieParser from 'cookie-parser';
 import router from './api/routes/index';
+import env from './config.env';
 import todayInit from './utils/todayInit';
+import session from 'express-session';
+import helmet from 'helmet';
+// import passport from 'passport';
 
-// import passportConfig from './passport';
-// passportConfig();
+const app = express();
 
+// Middlewares
+
+// 1. Body Parser
+app.use(express.json({ limit: '10kb' }));
+
+// 2. Cookie Parser
+app.use(cookieParser());
+
+// 3. Helmet
+app.use(helmet());
+
+// 4. Headers Setting
+app.use((req, res, next) => {
+  res.set({
+    'Access-Control-Allow-Origin': req.headers.origin,
+    'Access-Control-Allow-Headers': 'XMLHttpRequest,Content-Type',
+    'Access-Control-Allow-Methods': 'POST,GET',
+    'Access-Control-Allow-Credentials': true,
+    'Access-Control-Allow-Private-Network': true,
+  });
+  next();
+});
+
+// 5. Cors
+app.use(
+  cors({
+    origin: [env.FRONT_END_URL],
+    credentials: true,
+  })
+);
+
+// 6. Express Sesstion
+// app.use(
+//   session({
+//     resave: false,
+//     saveUninitialized: false,
+//     secret: env.SESSION_KEY,
+//     cookie: {
+//       httpOnly: true,
+//       secure: false,
+//     },
+//   })
+// );
+
+// 7. Passport Init
+// app.use(passport.initialize());
+// app.use(passport.session());
+
+
+// 8. Logger
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+
+// 9. Today Timer Start
 todayInit.initStart();
 
-class App {
-  public app: Express;
+// 10. Routes
+app.use('/', router);
 
-  constructor() {
-    this.app = express();
-    this.middleware();
-    this.testUrl();
-    this.router();
-  }
-
-  public middleware() {
-    this.app.use(express.json());
-    this.app.use(cookieParser());
-    this.app.use(helmet());
-    this.app.use(error.logger, error.handler);
-    this.app.use(
-      session({
-        resave: true,
-        saveUninitialized: false,
-        secret: env.SESSION_KEY,
-        cookie: {
-          httpOnly: true,
-          secure: false,
-        },
-      })
-    );
-    this.app.use((req, res, next) => {
-      res.set({
-        'Access-Control-Allow-Origin': req.headers.origin,
-        'Access-Control-Allow-Headers': 'XMLHttpRequest,Content-Type',
-        'Access-Control-Allow-Methods': 'POST,GET',
-        'Access-Control-Allow-Credentials': true,
-        'Access-Control-Allow-Private-Network': true,
-      });
-      next();
-    });
-    this.app.use(
-      cors({
-        origin: [env.FRONT_END_URL],
-        credentials: true,
-      })
-    );
-  }
-
-  public router() {
-    this.app.use('/', router);
-
-    // this.app.use((req, res, next) => {
-    //   const error = new Error('PAGE NOT FOUND');
-    //   // res.status(404).send(error.message);
-    //   res.status(404).json({ message: error.message });
-    // });
-  }
-
-  public testUrl() {
-    this.app.get('/', (req, res) => {
-      console.log('success');
-      res.status(200).send('success');
+// Testing
+app.get(
+  '/api/healthChecker',
+  (req: Request, res: Response, next: NextFunction) => {
+    res.status(200).json({
+      status: 'success',
+      message: 'Welcome to CodevoWeb😂😂👈👈',
     });
   }
-}
+);
 
-export default new App();
+// UnKnown Routes
+app.all('*', (req: Request, res: Response, next: NextFunction) => {
+  const err = new Error(`Route ${req.originalUrl} not found`) as any;
+  err.statusCode = 404;
+  next(err);
+});
+
+// Global Error Handler
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  err.status = err.status || 'error';
+  err.statusCode = err.statusCode || 500;
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
+});
+
+export default app;

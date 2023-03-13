@@ -56,25 +56,6 @@ class Redis {
     await this.client.hDel(key.toString(), field);
   }
 
-  async hDelBattleCache(key: string | number) {
-    // const fields = Object.keys(data);
-    const fields = [
-      'characterId',
-      'dungeonLevel',
-      'monsterId',
-      'autoAttackId',
-      'quit',
-      'dead',
-    ];
-    await this.client.hDel(key.toString(), [...fields]);
-  }
-
-  async hDelResetCache(key: string | number) {
-    // const fields = Object.keys(data);
-    const fields = ['characterId', 'monsterId', 'autoAttackId', 'quit', 'dead'];
-    await this.client.hDel(key.toString(), [...fields]);
-  }
-
   async disconnect() {
     await this.client.disconnect();
   }
@@ -85,30 +66,3 @@ class Redis {
 }
 
 export default new Redis();
-
-// export class RedisCache {
-//     private readonly cache: RedisClientType;
-//     private ttl: number;
-
-//     constructor(ttl: number) {
-
-//         this.ttl = ttl;
-//         this.cache = createClient({
-//             url: `redis://${env.REDIS_USER}:${env.REDIS_PASSWORD}@${env.REDIS_HOST}`
-//         });
-
-//         this.cache.on('connect', () => {
-//             //console.log('Redis connected');
-//         });
-
-//         this.cache.on('error', (error) => {
-//             //console.log('Redis error, service degraded: ', error);
-//         });
-//     }
-
-//     async get<T>(key: string, fetcher: ()=>Promise<T>): Promise<T> {
-
-//         if (!this.cache.connect) {}
-
-//     }
-// }

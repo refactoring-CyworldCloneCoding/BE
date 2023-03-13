@@ -37,6 +37,9 @@ export class Users extends BaseEntity {
   @Column()
   birth: string;
 
+  @Column({ default: 'user' })
+  role: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
