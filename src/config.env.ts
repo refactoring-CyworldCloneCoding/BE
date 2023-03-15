@@ -13,6 +13,8 @@ class dBConnection {
   DB_USER: string;
   DB_PASSWORD: string;
   DB_HOST: string;
+  DB_SYNCHRONIZE: boolean;
+  DB_DROPSCHEMA: boolean;
 
   REDIS_URL: string;
 
@@ -31,6 +33,8 @@ class dBConnection {
     this.DB_NAME = process.env[`DB_${DB[this.NODE_ENV]}_NAME`]!;
     this.DB_USER = process.env[`DB_${DB[this.NODE_ENV]}_USER`]!;
     this.DB_PASSWORD = process.env[`DB_${DB[this.NODE_ENV]}_PASSWORD`]!;
+    this.DB_SYNCHRONIZE = this.NODE_ENV === 'test' ? true : false;
+    this.DB_DROPSCHEMA = this.NODE_ENV === 'test' ? true : false;
 
     const REDIS_HOST = process.env[`REDIS_${DB[this.NODE_ENV]}_HOST`]!;
     const REDIS_USER = process.env[`REDIS_${DB[this.NODE_ENV]}_USER`]!;
