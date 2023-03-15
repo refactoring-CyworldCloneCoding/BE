@@ -4,7 +4,7 @@ REPOSITORY=/home/ubuntu/projects
 
 cd $REPOSITORY
 
-npm install
+npm install --no-optional
 
 sudo su
 
