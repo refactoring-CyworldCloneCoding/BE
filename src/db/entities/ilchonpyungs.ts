@@ -11,27 +11,24 @@ import { Myhomes } from './myhomes';
 import { Users } from './users';
 
 @Entity()
-export class Guestbooks extends BaseEntity {
+export class Ilchonpyungs extends BaseEntity {
   @PrimaryGeneratedColumn()
-  guestbookId: number;
+  ilchonpyungId!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @Column()
-  myhomeId: number;
+  myhomeId!: number;
 
   @Column()
-  guestBookNum: number;
+  nick!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  guestBook: string;
-
-  @Column()
-  bookImage: string;
+  ilchonpyung!: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -39,9 +36,9 @@ export class Guestbooks extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => Users, (user) => user.guestbooks)
-  user: Users;
+  @ManyToOne(() => Users, (user) => user.ilchonpyungs)
+  user!: Users;
 
-  @ManyToOne(() => Myhomes, (myhome) => myhome.guestbooks)
-  myhome: Myhomes;
+  @ManyToOne(() => Myhomes, (myhome) => myhome.ilchonpyungs)
+  myhome!: Myhomes;
 }

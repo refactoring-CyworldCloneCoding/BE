@@ -18,18 +18,18 @@ import { Users } from './users';
 @Entity()
 export class Myhomes extends BaseEntity {
   @PrimaryGeneratedColumn()
-  myhomeId: number;
+  myhomeId!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
-  @Column()
+  @Column({ default: '' })
   intro: string;
 
-  @Column()
+  @Column({ default: 0 })
   today: number;
 
-  @Column()
+  @Column({ default: 0 })
   total: number;
 
   @CreateDateColumn()
@@ -40,17 +40,17 @@ export class Myhomes extends BaseEntity {
 
   @OneToOne(() => Users, (users) => users.myhome)
   @JoinColumn()
-  user: Users;
+  user!: Users;
 
   @OneToMany(() => Diaries, (diaries) => diaries.myhome)
-  diaries: Diaries[];
+  diaries!: Diaries[];
 
   @OneToMany(() => Comments, (comments) => comments.myhome)
-  comments: Comments[];
+  comments!: Comments[];
 
   @OneToMany(() => Ilchonpyungs, (ilchonpyungs) => ilchonpyungs.myhome)
-  ilchonpyungs: Ilchonpyungs[];
+  ilchonpyungs!: Ilchonpyungs[];
 
   @OneToMany(() => Guestbooks, (guestbooks) => guestbooks.myhome)
-  guestbooks: Guestbooks[];
+  guestbooks!: Guestbooks[];
 }

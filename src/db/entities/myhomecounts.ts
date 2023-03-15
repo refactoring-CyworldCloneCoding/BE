@@ -10,16 +10,16 @@ import {
 @Entity()
 export class MyhomeCounts extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  ip: string;
+  ip!: string;
 
   @Column()
-  myhomeId: number;
+  myhomeId!: number;
 
   @Column()
-  time: string;
+  time!: string;
 
   @CreateDateColumn()
   createdAt: Date;
