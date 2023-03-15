@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import env from '../../config.env';
-import * as models from '../models';
+import * as entities from '../entities';
 
 export const typeORMConfig = new DataSource({
   type: 'mysql',
@@ -9,7 +9,7 @@ export const typeORMConfig = new DataSource({
   username: env.DB_USER,
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
-  entities: models,
-  synchronize: true,
-  // synchronize: env.synchronize,
+  entities,
+  synchronize: env.DB_SYNCHRONIZE,
+  dropSchema: env.DB_DROPSCHEMA,
 });

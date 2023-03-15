@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import redis from '../db/cache/redis';
-import { Users } from '../db/models';
+import { Users } from '../db/entities';
 import AppError from '../utils/appError';
 import { verifyJwt } from '../utils/jwt';
 
@@ -19,21 +19,22 @@ export default {
       }
 
       if (!access_token) {
-        return next(new AppError('You are not logged in', 401));
+        return res.redirect('/users/refresh');
+        // return next(new AppError('로그인하지 않았습니다.', 401));
       }
 
       // Validate Access Token
       const decoded = verifyJwt<{ sub: string }>(access_token);
 
       if (!decoded) {
-        return next(new AppError(`Invalid token or user doesn't exist`, 401));
+        return next(new AppError(`잘못된 토큰 또는 사용자가 없습니다`, 401));
       }
 
       // Check if user has a valid session
       const session = await redis.get(decoded.sub);
 
       if (!session) {
-        return next(new AppError(`User session has expired`, 401));
+        return next(new AppError(`사용자 세션이 만료되었습니다.`, 401));
       }
 
       // Check if user still exist
@@ -42,7 +43,12 @@ export default {
       });
 
       if (!user) {
-        return next(new AppError(`User with that token no longer exist`, 401));
+        return next(
+          new AppError(
+            `해당 토큰을 가진 사용자가 더 이상 존재하지 않습니다`,
+            401
+          )
+        );
       }
 
       // This is really important (Helps us know if the user is logged in from other controllers)
@@ -68,14 +74,14 @@ export default {
       }
 
       if (access_token) {
-        const error = new AppError('You are logged in', 401);
+        const error = new AppError('이미 로그인 되어있습니다.', 401);
         return res.json({ msg: error.message });
       }
 
       return next();
     } catch (error: any) {
       res.status(400).json({
-        message: error.message,
+        msg: error.message,
       });
     }
   },

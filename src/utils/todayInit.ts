@@ -1,4 +1,4 @@
-import { Myhomes } from '../db/models';
+import { Myhomes } from '../db/entities';
 
 class TodayInits {
   myhomesTodayInit = async () => {

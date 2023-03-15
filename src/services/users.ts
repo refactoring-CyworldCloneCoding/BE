@@ -22,53 +22,26 @@ export default {
 
   userLogin: async (email: string, password: string) => {
     const user = await Users.findOneEmail(email);
-    if (!user) throw new Error('가입하신 회원이 아닙니다.');
+    if (!user) throw new AppError('가입하신 회원이 아닙니다.', 400);
 
     const isEqual = await bcrypt.compare(password, user.password);
-    if (!isEqual) throw new AppError('Invalid email or password', 401);
+    if (!isEqual) throw new AppError('이메일 혹은 비밀번호를 확인해주세요.', 400);
 
     const findMyhome = await Myhomes.findUserMyhome(user.userId);
 
     // Sign the access token
-    const access_token = signJwt({ sub: user.userId });
+    const accesstoken = signJwt({ sub: user.userId });
 
     // Sign the refresh token
-    const refresh_token = signJwt({ sub: user.userId });
+    const refreshtoken = signJwt({ sub: user.userId });
     // Create a Session
     redis.set(user.userId, JSON.stringify(user), {
       EX: 60 * 60 * 24,
     });
 
     // Return access token
-    return { access_token, refresh_token, myhomeId: findMyhome.myhomeId };
+    return { accesstoken, refreshtoken, myhomeId: findMyhome.myhomeId };
   },
-
-  // userLogin: async (email: string, password: string) => {
-  //   const user = await Users.findOneEmail(email);
-  //   if (!user) throw new Error('가입하신 회원이 아닙니다.');
-
-  //   const isEqual = await bcrypt.compare(password, user.password);
-  //   if (!isEqual) throw new Error('비밀번호가 다릅니다.');
-
-  //   const findMyhome = await Myhomes.findUserMyhome(user.userId);
-
-  //   const payload: PayloadI = {
-  //     myhomeId: findMyhome!.myhomeId,
-  //     userId: user.userId,
-  //     name: user.name,
-  //     gender: user.gender,
-  //   };
-
-  //   const accesstoken = signJwt(payload);
-  //   const refreshtoken = signJwt(payload);
-  //   // await Users.updateRefresh(refreshtoken, user);
-
-  //   return {
-  //     accesstoken: 'Bearer ' + accesstoken,
-  //     refreshtoken: 'Bearer ' + refreshtoken,
-  //     ...payload,
-  //   };
-  // },
 
   surfing: async () => {
     const maxMyhomeId = await Myhomes.findMaxHome();
@@ -84,7 +57,7 @@ export default {
     const { myhomeId } = req.params;
     const findByUser = await Myhomes.findByMyhome(+myhomeId);
 
-    if (!findByUser) throw new Error('존재하지 않는 미니홈피 입니다.');
+    if (!findByUser) throw new AppError('존재하지 않는 미니홈피 입니다.', 400);
 
     const time = Date.now();
 

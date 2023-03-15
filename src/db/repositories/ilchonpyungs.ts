@@ -1,4 +1,4 @@
-import { Ilchonpyungs } from '../models';
+import { Ilchonpyungs } from '../entities';
 import { CreateIlchonpyungForm } from '../../interfaces/Ilchonpyung';
 
 class IlchonpyungsRepository {

@@ -33,13 +33,13 @@ export default {
         await Joi.signupSchema.validateAsync(req.body);
 
       if (password !== confirm)
-        throw new Error('비밀번호가 일치하지 않습니다.');
+        throw new AppError('비밀번호가 일치하지 않습니다.', 400);
 
       const emailcheck = await Users.emailDuplicates(email);
-      if (emailcheck) throw new Error('이메일 중복검사를 해주세요.');
+      if (emailcheck) throw new AppError('이메일 중복검사를 해주세요.', 409);
 
       if (name.includes(password) || password.includes(name))
-        throw new Error('이름과 비밀번호를 다른형식으로 설정해주세요.');
+        throw new AppError('이름과 비밀번호를 다른형식으로 설정해주세요.', 400);
 
       const users: UserInfo = {
         email,
@@ -50,9 +50,8 @@ export default {
       };
 
       await Users.createUser(users);
-      res.status(200).json({ msg: '회원가입에 성공하셨습니다.' });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+      res.status(201).json({ msg: '회원가입에 성공하셨습니다.' });
+    } catch (error) {
       next(error);
     }
   },
@@ -64,14 +63,14 @@ export default {
       const { email, password } = await Joi.loginSchema.validateAsync(req.body);
 
       // Create the Access and refresh Tokens
-      const { access_token, refresh_token, myhomeId } = await Users.userLogin(
+      const { accesstoken, refreshtoken, myhomeId } = await Users.userLogin(
         email,
         password
       );
 
       // Send Access Token in Cookie
-      res.cookie('access_token', access_token, accessTokenCookieOptions);
-      res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
+      res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
+      res.cookie('refreshtoken', refreshtoken, refreshTokenCookieOptions);
       res.cookie('logged_in', true, {
         ...accessTokenCookieOptions,
         httpOnly: false,
@@ -80,11 +79,10 @@ export default {
       // Send Access Token
       res.status(200).json({
         status: 'success',
-        access_token,
+        accesstoken,
         myhomeId,
       });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+    } catch (error) {
       next(error);
     }
   },
@@ -96,11 +94,11 @@ export default {
   ) => {
     try {
       // Get the refresh token from cookie
-      const refresh_token = req.cookies.refresh_token as string;
+      const refreshtoken = req.cookies.refreshtoken as string;
 
       // Validate the Refresh token
-      const decoded = verifyJwt<{ sub: string }>(refresh_token);
-      const message = 'Could not refresh access token';
+      const decoded = verifyJwt<{ sub: string }>(refreshtoken);
+      const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
       if (!decoded) {
         return next(new AppError(message, 403));
       }
@@ -119,10 +117,10 @@ export default {
       }
 
       // Sign new access token
-      const access_token = signJwt({ sub: user.userId });
+      const accesstoken = signJwt({ sub: user.userId });
 
       // Send the access token as cookie
-      res.cookie('access_token', access_token, accessTokenCookieOptions);
+      res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
       res.cookie('logged_in', true, {
         ...accessTokenCookieOptions,
         httpOnly: false,
@@ -131,52 +129,24 @@ export default {
       // Send response
       res.status(200).json({
         status: 'success',
-        access_token,
+        accesstoken,
       });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+    } catch (error) {
       next(error);
     }
   },
-
-  // //로그인
-  // login: async (req: Request, res: Response, next: NextFunction) => {
-  //   passport.authenticate('local', (authError, user, info) => {
-  //     if (authError) {
-  //       res.status(400).json({ msg: 'authError' });
-  //       return next(authError);
-  //     }
-
-  //     if (!user) return res.status(400).json({ msg: info.message });
-
-  //     return req.login(user, async (loginError) => {
-  //       if (loginError) {
-  //         res.status(400).json({ msg: 'loginError' });
-  //         return next(loginError);
-  //       }
-
-  //       const myhome = await Users.findUserMyhome(user.userId);
-
-  //       return res.status(200).json({
-  //         myhomeId: myhome.myhomeId,
-  //         msg: '로그인에 성공하였습니다',
-  //       });
-  //     });
-  //   })(req, res, next);
-  // },
 
   logout: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { user } = res.app.locals;
       await redis.del(user.userId);
-      res.cookie('access_token', '', { maxAge: 1 });
-      res.cookie('refresh_token', '', { maxAge: 1 });
+      res.cookie('accesstoken', '', { maxAge: 1 });
+      res.cookie('refreshtoken', '', { maxAge: 1 });
       res.cookie('logged_in', '', {
         maxAge: 1,
       });
-      res.status(400).json({ msg: '로그아웃 되었습니다.' });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+      res.status(200).json({ msg: '로그아웃 되었습니다.' });
+    } catch (error) {
       next(error);
     }
   },
@@ -187,11 +157,10 @@ export default {
       const { email } = await Joi.emailCheckSchema.validateAsync(req.body);
 
       const emailCheck = await Users.emailDuplicates(email);
-      if (emailCheck) throw new Error('이미 등록된 사용자입니다.');
+      if (emailCheck) throw new AppError('이미 등록된 사용자입니다.', 409);
 
       res.status(200).send({ msg: '사용가능한 이메일입니다.' });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+    } catch (error) {
       next(error);
     }
   },
@@ -200,8 +169,7 @@ export default {
     try {
       const result = await Users.surfing();
       res.status(200).send({ data: result!.myhomeId });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+    } catch (error) {
       next(error);
     }
   },
@@ -212,8 +180,7 @@ export default {
       await Users.todayTotal(req);
       const result = await Users.findByMyhome(+myhomeId);
       res.status(200).send({ data: result });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+    } catch (error) {
       next(error);
     }
   },
@@ -225,14 +192,13 @@ export default {
       const { userId } = res.app.locals.user;
       const findMyHome = await Users.findByMyhome(+myhomeId);
 
-      if (!findMyHome) throw new Error('잘못된 요청입니다.');
+      if (!findMyHome) throw new AppError('잘못된 요청입니다.', 403);
       if (userId != findMyHome.userId)
-        throw new Error('본인 소개글만 수정가능합니다.');
+        throw new AppError('본인 소개글만 수정가능합니다.', 403);
 
       await Users.introupdate(+myhomeId, intro);
-      res.status(200).json({ msg: 'intro가 수정되었습니다' });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+      res.status(201).json({ msg: 'intro가 수정되었습니다' });
+    } catch (error) {
       next(error);
     }
   },
@@ -242,7 +208,7 @@ export default {
   //   try {
   //     const price = await Users.chargeDotori(req, res);
   //     res.status(200).send({ msg: `도토리 ${price}개가 충전되었습니다.` });
-  // } catch (error: any) {
+  // } catch (error) {
   //   res.status(400).json({ msg: error.message });
   // next(error);
   // }
@@ -251,7 +217,7 @@ export default {
   // chargeCoupons: (req: Request, res: Response, next: NextFunction) => {
   //   try {
   //     res.status(200).send({ msg: `쿠폰으로 ${coupon}개가 충전되었습니다.` });
-  // } catch (error: any) {
+  // } catch (error) {
   //   res.status(400).json({ msg: error.message });
   // next(error);
   // }
@@ -267,8 +233,7 @@ export default {
           users,
         },
       });
-    } catch (error: any) {
-      res.status(400).json({ msg: error.message });
+    } catch (error) {
       next(error);
     }
   },
