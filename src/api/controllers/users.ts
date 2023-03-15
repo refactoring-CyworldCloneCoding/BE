@@ -79,7 +79,7 @@ export default {
       // Send Access Token
       res.status(200).json({
         status: 'success',
-        accesstoken,
+        accesstoken: 'Bearer ' + accesstoken,
         myhomeId,
       });
     } catch (error) {
@@ -129,7 +129,7 @@ export default {
       // Send response
       res.status(200).json({
         status: 'success',
-        accesstoken,
+        accesstoken: 'Bearer ' + accesstoken,
       });
     } catch (error) {
       next(error);

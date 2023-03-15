@@ -9,7 +9,7 @@ router.get('/', auth.isNotLoggedIn, restrictTo('admin'), Users.getAllUsers);
 
 router.post('/signup', auth.isLoggedIn, Users.signup);
 router.post('/login', auth.isLoggedIn, Users.login);
-router.get('/refresh', auth.isNotLoggedIn, Users.refreshAccessTokenHandler);
+router.get('/refresh', Users.refreshAccessTokenHandler);
 router.get('/logout', auth.isNotLoggedIn, Users.logout);
 router.post('/emailcheck', Users.emailCheck);
 router.get('/surfing', Users.surfing);

@@ -8,23 +8,25 @@ export default {
   isNotLoggedIn: async (req: Request, res: Response, next: NextFunction) => {
     try {
       // Get the token
-      let access_token;
+      let accesstoken;
       if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
       ) {
-        access_token = req.headers.authorization.split(' ')[1];
-      } else if (req.cookies.access_token) {
-        access_token = req.cookies.access_token;
+        accesstoken = req.headers.authorization.split(' ')[1];
+      } else if (req.cookies.accesstoken) {
+        accesstoken = req.cookies.accesstoken;
       }
 
-      if (!access_token) {
-        return res.redirect('/users/refresh');
-        // return next(new AppError('로그인하지 않았습니다.', 401));
+      console.log('isNotLoggedIn - accesstoken : ', req.headers);
+
+      if (!accesstoken) {
+        // return res.redirect('/users/refresh');
+        return next(new AppError('로그인하지 않았습니다.', 401));
       }
 
       // Validate Access Token
-      const decoded = verifyJwt<{ sub: string }>(access_token);
+      const decoded = verifyJwt<{ sub: string }>(accesstoken);
 
       if (!decoded) {
         return next(new AppError(`잘못된 토큰 또는 사용자가 없습니다`, 401));
@@ -63,17 +65,18 @@ export default {
 
   isLoggedIn: (req: Request, res: Response, next: NextFunction) => {
     try {
-      let access_token;
+      let accesstoken;
       if (
         req.headers.authorization &&
         req.headers.authorization.startsWith('Bearer')
       ) {
-        access_token = req.headers.authorization.split(' ')[1];
-      } else if (req.cookies.access_token) {
-        access_token = req.cookies.access_token;
+        accesstoken = req.headers.authorization.split(' ')[1];
+      } else if (req.cookies.accesstoken) {
+        accesstoken = req.cookies.accesstoken;
       }
+      console.log('isLoggedIn - accesstoken : ', accesstoken);
 
-      if (access_token) {
+      if (accesstoken) {
         const error = new AppError('이미 로그인 되어있습니다.', 401);
         return res.json({ msg: error.message });
       }
