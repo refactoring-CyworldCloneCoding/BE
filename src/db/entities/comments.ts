@@ -14,22 +14,22 @@ import { Users } from './users';
 @Entity()
 export class Comments extends BaseEntity {
   @PrimaryGeneratedColumn()
-  commentId: number;
+  commentId!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @Column()
-  myhomeId: number;
+  myhomeId!: number;
 
   @Column()
-  diaryId: number;
+  diaryId!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  comment: string;
+  comment!: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -38,11 +38,11 @@ export class Comments extends BaseEntity {
   updatedAt: Date;
 
   @ManyToOne(() => Diaries, (diaries) => diaries.comments)
-  diary: Diaries;
+  diary!: Diaries;
 
   @ManyToOne(() => Users, (user) => user.comments)
-  user: Diaries;
+  user!: Diaries;
 
   @ManyToOne(() => Myhomes, (myhome) => myhome.comments)
-  myhome: Myhomes;
+  myhome!: Myhomes;
 }

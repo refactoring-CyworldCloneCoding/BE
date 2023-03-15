@@ -1,4 +1,4 @@
-import { Users, MyhomeCounts, Myhomes } from '../models';
+import { Users, MyhomeCounts, Myhomes } from '../entities';
 import { TodayForm } from '../../interfaces/myHome';
 
 class MyhomesRepositories extends Myhomes {

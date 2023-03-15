@@ -1,4 +1,4 @@
-import { Users } from '../models';
+import { Users } from '../entities';
 import { UserInfo } from '../../interfaces/user';
 
 class UsersRepositories extends Users {

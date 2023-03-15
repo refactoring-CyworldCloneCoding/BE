@@ -20,22 +20,22 @@ import { Myhomes } from './myhomes';
 @Unique(['email'])
 export class Users extends BaseEntity {
   @PrimaryGeneratedColumn()
-  userId: number;
+  userId!: number;
 
   @Column()
-  email: string;
+  email!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column()
-  gender: string;
+  gender!: string;
 
   @Column()
-  birth: string;
+  birth!: string;
 
   @Column({ default: 'user' })
   role: string;
@@ -47,19 +47,19 @@ export class Users extends BaseEntity {
   updatedAt: Date;
 
   @OneToOne(() => Myhomes, (myhome) => myhome.user)
-  myhome: Myhomes;
+  myhome!: Myhomes;
 
   @OneToMany(() => Diaries, (diaries) => diaries.user)
-  diaries: Diaries[];
+  diaries!: Diaries[];
 
   @OneToMany(() => Comments, (comments) => comments.user)
-  comments: Comments[];
+  comments!: Comments[];
 
   @OneToMany(() => Ilchonpyungs, (ilchonpyungs) => ilchonpyungs.user)
-  ilchonpyungs: Ilchonpyungs[];
+  ilchonpyungs!: Ilchonpyungs[];
 
   @OneToMany(() => Guestbooks, (guestbooks) => guestbooks.user)
-  guestbooks: Guestbooks[];
+  guestbooks!: Guestbooks[];
 
   // async validatePassword(password: string): Promise<boolean> {
   //   const isValid: boolean = await bcrypt.compare(password, this.password);

@@ -1,5 +1,5 @@
 import { CreateCommentsForm } from '../../interfaces/comment';
-import { Comments, Diaries } from '../models';
+import { Comments, Diaries } from '../entities';
 
 class CommentRepository {
   findAllComment = async (myhomeId: number, diaryId: number) => {

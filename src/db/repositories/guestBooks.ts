@@ -1,5 +1,5 @@
 import { GuestBooksCreateForm } from '../../interfaces/guestbook';
-import { Guestbooks } from '../models';
+import { Guestbooks } from '../entities';
 
 class GuestBooksRepository {
   createBook = async (CreateForm: GuestBooksCreateForm) => {

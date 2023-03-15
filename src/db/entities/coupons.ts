@@ -10,16 +10,16 @@ import {
 @Entity()
 export class Coupons extends BaseEntity {
   @PrimaryGeneratedColumn()
-  couponId: number;
+  couponId!: number;
 
   @Column()
-  couponNum: number;
+  couponNum!: number;
 
   @Column()
-  price: number;
+  price!: number;
 
-  @Column()
-  status: string;
+  @Column({ default: false })
+  status: boolean;
 
   @CreateDateColumn()
   createdAt: Date;

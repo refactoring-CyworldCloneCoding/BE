@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { GuestBooks, Myhomes, Users } from '../db/repositories';
 import { GuestBooksCreateForm } from '../interfaces/guestbook';
-import { Guestbooks as GuestBooksModels } from '../db/models';
+import { Guestbooks as GuestBooksModels } from '../db/entities';
 import env from '../config.env';
 
 class GuestBooksService {

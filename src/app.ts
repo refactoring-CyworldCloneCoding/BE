@@ -5,9 +5,7 @@ import cookieParser from 'cookie-parser';
 import router from './api/routes/index';
 import env from './config.env';
 import todayInit from './utils/todayInit';
-import session from 'express-session';
 import helmet from 'helmet';
-// import passport from 'passport';
 
 const app = express();
 
@@ -41,24 +39,6 @@ app.use(
     credentials: true,
   })
 );
-
-// 6. Express Sesstion
-// app.use(
-//   session({
-//     resave: false,
-//     saveUninitialized: false,
-//     secret: env.SESSION_KEY,
-//     cookie: {
-//       httpOnly: true,
-//       secure: false,
-//     },
-//   })
-// );
-
-// 7. Passport Init
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 
 // 8. Logger
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
@@ -94,7 +74,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
   res.status(err.statusCode).json({
     status: err.status,
-    message: err.message,
+    msg: err.message,
   });
 });
 

@@ -16,21 +16,21 @@ import { Users } from './users';
 @Entity()
 export class Diaries extends BaseEntity {
   @PrimaryGeneratedColumn()
-  diaryId: number;
+  diaryId!: number;
 
   @Column()
-  userId: number;
+  userId!: number;
 
   @Column()
-  myhomeId: number;
+  myhomeId!: number;
 
-  @Column()
+  @Column({ default: 0 })
   diaryNo: number;
 
   @Column()
   content: string;
 
-  @Column({ nullable: true, default: true })
+  @Column({default: undefined })
   dirImg: string;
 
   @CreateDateColumn()
@@ -41,11 +41,11 @@ export class Diaries extends BaseEntity {
 
   @OneToMany(() => Comments, (comments) => comments.diary)
   @JoinColumn()
-  comments: Comments[];
+  comments!: Comments[];
 
   @ManyToOne(() => Users, (user) => user.diaries)
-  user: Users;
+  user!: Users;
 
   @ManyToOne(() => Myhomes, (myhome) => myhome.diaries)
-  myhome: Myhomes;
+  myhome!: Myhomes;
 }
