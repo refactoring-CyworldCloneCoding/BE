@@ -5,7 +5,7 @@ class UsersRepositories extends Users {
   constructor() {
     super();
   }
-  createUser = async (user: UserInfo) => {
+  createUser = async (user: UserInfo): Promise<Users> => {
     return await Users.save(user);
   };
 
