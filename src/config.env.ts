@@ -33,18 +33,20 @@ class dBConnection {
     this.DB_NAME = process.env[`DB_${DB[this.NODE_ENV]}_NAME`]!;
     this.DB_USER = process.env[`DB_${DB[this.NODE_ENV]}_USER`]!;
     this.DB_PASSWORD = process.env[`DB_${DB[this.NODE_ENV]}_PASSWORD`]!;
-    this.DB_SYNCHRONIZE = this.NODE_ENV === 'test' ? true : false;
-    this.DB_DROPSCHEMA = this.NODE_ENV === 'test' ? true : false;
+    this.DB_SYNCHRONIZE = this.NODE_ENV === 'TEST' ? true : false;
+    this.DB_DROPSCHEMA = this.NODE_ENV === 'TEST' ? true : false;
 
     const REDIS_HOST = process.env[`REDIS_${DB[this.NODE_ENV]}_HOST`]!;
     const REDIS_USER = process.env[`REDIS_${DB[this.NODE_ENV]}_USER`]!;
     const REDIS_PASSWORD = process.env[`REDIS_${DB[this.NODE_ENV]}_PASSWORD`]!;
     const REDIS_PORT = Number(process.env[`REDIS_${DB[this.NODE_ENV]}_PORT`]);
 
-    this.REDIS_URL =
-      this.NODE_ENV === 'production'
-        ? `redis://${REDIS_HOST}:${REDIS_PORT}`
-        : `redis://${REDIS_USER}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0`;
+    // this.REDIS_URL =
+    //   this.NODE_ENV === 'production'
+    //     ? `redis://${REDIS_HOST}:${REDIS_PORT}`
+    //     : `redis://${REDIS_USER}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0`;
+
+    this.REDIS_URL = `redis://${REDIS_USER}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0`;
   }
 }
 
