@@ -6,7 +6,7 @@ import { typeORMConfig } from './src/db/config/connection';
 
 const port = env.PORT;
 
-if (env.NODE_ENV == 'production') {
+if (env.NODE_ENV === 'production') {
   try {
     const option = {
       ca: fs.readFileSync(env.CA_FULL_CHAIN),
