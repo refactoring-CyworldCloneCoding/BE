@@ -15,6 +15,7 @@ router.post(
 router.put(
   '/:diaryId',
   auth.isNotLoggedIn,
+  S3Upload.delete_file,
   S3Upload.upload.single('dirImg'),
   Diaries.updateDiary
 );

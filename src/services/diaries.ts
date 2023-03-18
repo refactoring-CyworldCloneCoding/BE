@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { Diaries, Myhomes } from '../db/repositories';
 import { CreateDiaryForm, UpdateDiaryForm } from '../interfaces/diary';
 import env from '../config.env';
+import AppError from '../utils/appError';
 
 class DiaryService {
   findAllDiary = async (myhomeId: number) => {
     const myhome = await Myhomes.findByMyhome(myhomeId);
-    if (!myhome) throw new Error('잘못된 요청입니다.');
+    if (!myhome) throw new AppError('잘못된 요청입니다.', 400);
     const allDiary = await Diaries.findAllDiary(myhomeId);
 
     for (let i = 0; i < allDiary.length; i++) {
@@ -26,10 +27,9 @@ class DiaryService {
 
     const myhome = await Myhomes.findByMyhome(+myhomeId);
 
-    if (!myhome) throw new Error('잘못된 요청입니다.');
-    if (!content) throw new Error('내용을 입력해주세요!');
-    if (user.userId !== myhome.userId) throw new Error('작성 권한이 없습니다.');
-
+    if (!myhome) throw new AppError('잘못된 요청입니다.', 400);
+    if (!content) throw new AppError('내용을 입력해주세요!', 400);
+    if (user.userId !== myhome.userId) throw new AppError('작성 권한이 없습니다.', 403);
     const file = req.file as Express.MulterS3.File;
 
     const imageFileName = file ? file.key : null;
@@ -43,7 +43,6 @@ class DiaryService {
       name: user.name,
       dirImg,
       content,
-      diaryNo: 0,
     };
 
     return await Diaries.createDiary(createDiary);
@@ -55,7 +54,7 @@ class DiaryService {
     const { user } = res.app.locals;
 
     const diary = await Diaries.findOneDiary(+diaryId);
-    if (!diary) throw new Error('잘못된 요청입니다.');
+    if (!diary) throw new AppError('잘못된 요청입니다.', 401);
     const file = req.file as Express.MulterS3.File;
 
     const imageFileName = file ? file.key : undefined;
@@ -63,7 +62,7 @@ class DiaryService {
       ? env.S3_STORAGE_URL + imageFileName
       : undefined;
     // 본인 이외의 사람이 다이어리 수정시 예외처리
-    if (user.userId !== diary.userId) throw new Error('수정 권한이 없습니다.');
+    if (user.userId !== diary.userId) throw new AppError('수정 권한이 없습니다.', 403);
 
     const updateDiary: UpdateDiaryForm = {
       diaryId: +diaryId,
@@ -76,8 +75,8 @@ class DiaryService {
 
   deleteDiary = async (diaryId: number, userId: number) => {
     const diary = await Diaries.findOneDiary(diaryId);
-    if (!diary) throw new Error('잘못된 요청입니다.');
-    if (userId !== diary.userId) throw new Error('삭제 권한이 없습니다.');
+    if (!diary) throw new AppError('잘못된 요청입니다.', 400);
+    if (userId !== diary.userId) throw new AppError('삭제 권한이 없습니다.', 403);
     await Diaries.deleteDiary(diaryId);
   };
 }
