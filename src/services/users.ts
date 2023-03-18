@@ -85,11 +85,13 @@ export default {
   },
 
   findByMyhome: async (myhomeId: number) => {
-    return await Myhomes.findByMyhome(myhomeId);
+    const myhome = await Myhomes.findByMyhome(myhomeId);
+    delete myhome.user.password;
+    return myhome;
   },
 
-  findUserMyhome: (userId: number) => {
-    return Myhomes.findUserMyhome(userId);
+  findUserMyhome: async (userId: number) => {
+    return await Myhomes.findUserMyhome(userId);
   },
 
   introupdate: async (myhomeId: number, intro: string) => {
