@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { Myhomes, Users } from '../db/repositories';
-import { signJwt } from '../utils/jwt';
+import { refresh, signJwt } from '../utils/jwt';
 import bcrypt from 'bcrypt';
 import { UserInfo } from '../interfaces/user';
 import AppError from '../utils/appError';
@@ -25,22 +25,27 @@ export default {
     if (!user) throw new AppError('가입하신 회원이 아닙니다.', 400);
 
     const isEqual = await bcrypt.compare(password, user.password);
-    if (!isEqual) throw new AppError('이메일 혹은 비밀번호를 확인해주세요.', 400);
+    if (!isEqual)
+      throw new AppError('이메일 혹은 비밀번호를 확인해주세요.', 400);
 
     const findMyhome = await Myhomes.findUserMyhome(user.userId);
 
     // Sign the access token
-    const accesstoken = signJwt({ sub: user.userId });
+    const accesstoken = signJwt({ userId: user.userId });
 
     // Sign the refresh token
-    const refreshtoken = signJwt({ sub: user.userId });
+    const refreshtoken = refresh({ userId: user.userId });
     // Create a Session
-    redis.set(user.userId, JSON.stringify(user), {
-      EX: 60 * 60 * 24,
-    });
+    redis.set(
+      user.userId,
+      JSON.stringify({ userId: user.userId, refreshtoken }),
+      {
+        EX: 60 * 60 * 24 * 7,
+      }
+    );
 
     // Return access token
-    return { accesstoken, refreshtoken, myhomeId: findMyhome.myhomeId };
+    return { accesstoken, myhomeId: findMyhome.myhomeId };
   },
 
   surfing: async () => {

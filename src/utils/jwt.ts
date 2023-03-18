@@ -3,21 +3,27 @@ import jwt from 'jsonwebtoken';
 
 export const signJwt = (payload: Object = {}) => {
   return jwt.sign(payload, env.JWT_KEY, {
-    expiresIn: 60 * 60 * 12,
+    expiresIn: '12h',
     algorithm: 'HS256',
   });
 };
 
 export const refresh = (payload: Object = {}) => {
   return jwt.sign(payload, env.JWT_KEY, {
-    expiresIn: 60 * 60 * 24,
+    expiresIn: '7d',
     algorithm: 'HS256',
   });
 };
 
-export const verifyJwt = <T>(
-  token: string,
-): T | null => {
+export const decodeJwt = <T>(token: string): T | null => {
+  try {
+    return jwt.decode(token) as T;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const verifyJwt = <T>(token: string): T | null => {
   try {
     return jwt.verify(token, env.JWT_KEY) as T;
   } catch (error) {

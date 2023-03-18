@@ -4,23 +4,9 @@ import Joi from '../../utils/joi';
 import { UserInfo } from '../../interfaces/user';
 // import passport from 'passport';
 import redis from '../../db/cache/redis';
-import { signJwt, verifyJwt } from '../../utils/jwt';
+import { decodeJwt, signJwt, verifyJwt } from '../../utils/jwt';
 import AppError from '../../utils/appError';
-
-// Cookie options
-const accessTokenCookieOptions: CookieOptions = {
-  expires: new Date(60 * 60 * 12),
-  maxAge: 60 * 60 * 12,
-  httpOnly: true,
-  sameSite: 'lax',
-};
-
-const refreshTokenCookieOptions: CookieOptions = {
-  expires: new Date(60 * 60 * 24),
-  maxAge: 60 * 60 * 24,
-  httpOnly: true,
-  sameSite: 'lax',
-};
+import { accessTokenCookieOptions } from '../../middlewares/auth';
 
 // Only set secure to true in production
 if (process.env.NODE_ENV === 'production')
@@ -63,14 +49,10 @@ export default {
       const { email, password } = await Joi.loginSchema.validateAsync(req.body);
 
       // Create the Access and refresh Tokens
-      const { accesstoken, refreshtoken, myhomeId } = await Users.userLogin(
-        email,
-        password
-      );
+      const { accesstoken, myhomeId } = await Users.userLogin(email, password);
 
       // Send Access Token in Cookie
       res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
-      res.cookie('refreshtoken', refreshtoken, refreshTokenCookieOptions);
       res.cookie('logged_in', true, {
         ...accessTokenCookieOptions,
         httpOnly: false,
@@ -93,31 +75,32 @@ export default {
     next: NextFunction
   ) => {
     try {
-      // Get the refresh token from cookie
-      const refreshtoken = req.cookies.refreshtoken as string;
-
-      // Validate the Refresh token
-      const decoded = verifyJwt<{ sub: string }>(refreshtoken);
       const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
-      if (!decoded) {
-        return next(new AppError(message, 403));
-      }
+
+      // Get the access token from cookie
+      const { userId } = decodeJwt<{ userId: number }>(req.cookies.accesstoken);
 
       // Check if the user has a valid session
-      const session = await redis.get(decoded.sub);
-      if (!session) {
-        return next(new AppError(message, 403));
-      }
+      const session = await redis.get(userId);
+      if (!session) return next(new AppError(message, 403));
+      const refreshtoken = JSON.parse(session).refreshtoken as string;
+
+      // Validate the Refresh token
+      const decoded = verifyJwt<{ userId: number }>(refreshtoken);
+      if (!decoded) return next(new AppError(message, 403));
 
       // Check if the user exist
-      const user = await Users.findUserMyhome(JSON.parse(session).userId);
+      const user = await Users.findUserMyhome(decoded.userId);
 
-      if (!user) {
-        return next(new AppError(message, 403));
-      }
+      if (!user) return next(new AppError(message, 403));
 
       // Sign new access token
-      const accesstoken = signJwt({ sub: user.userId });
+      const accesstoken = signJwt({ userId: user.userId });
+
+      redis.set(
+        user.userId,
+        JSON.stringify({ userId: user.userId, refreshtoken })
+      );
 
       // Send the access token as cookie
       res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
@@ -141,7 +124,6 @@ export default {
       const { user } = res.app.locals;
       await redis.del(user.userId);
       res.cookie('accesstoken', '', { maxAge: 1 });
-      res.cookie('refreshtoken', '', { maxAge: 1 });
       res.cookie('logged_in', '', {
         maxAge: 1,
       });
