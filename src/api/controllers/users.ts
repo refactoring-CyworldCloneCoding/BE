@@ -99,22 +99,16 @@ export default {
       // Validate the Refresh token
       const decoded = verifyJwt<{ sub: string }>(refreshtoken);
       const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
-      if (!decoded) {
-        return next(new AppError(message, 403));
-      }
+      if (!decoded) return next(new AppError(message, 403));
 
       // Check if the user has a valid session
       const session = await redis.get(decoded.sub);
-      if (!session) {
-        return next(new AppError(message, 403));
-      }
+      if (!session) return next(new AppError(message, 403));
 
       // Check if the user exist
       const user = await Users.findUserMyhome(JSON.parse(session).userId);
 
-      if (!user) {
-        return next(new AppError(message, 403));
-      }
+      if (!user) return next(new AppError(message, 403));
 
       // Sign new access token
       const accesstoken = signJwt({ sub: user.userId });
