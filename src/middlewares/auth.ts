@@ -1,8 +1,47 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, CookieOptions } from 'express';
 import redis from '../db/cache/redis';
 import { Users } from '../db/entities';
 import AppError from '../utils/appError';
-import { verifyJwt } from '../utils/jwt';
+import { signJwt, verifyJwt } from '../utils/jwt';
+
+// Cookie options
+const accessTokenCookieOptions: CookieOptions = {
+  expires: new Date(60 * 60 * 12),
+  maxAge: 60 * 60 * 12,
+  httpOnly: true,
+  sameSite: 'lax',
+};
+
+async function accessTokenReissue(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const refreshtoken = req.cookies.refreshtoken as string;
+
+  const decoded = verifyJwt<{ sub: string }>(refreshtoken);
+  const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
+  if (!decoded) return next(new AppError(message, 403));
+
+  const session = await redis.get(decoded.sub);
+  if (!session) return next(new AppError(message, 403));
+
+  const user = await Users.findOne({
+    where: { userId: JSON.parse(session).userId },
+  });
+
+  if (!user) return next(new AppError(message, 403));
+
+  const accesstoken = signJwt({ sub: user.userId });
+
+  res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
+  res.cookie('logged_in', true, {
+    ...accessTokenCookieOptions,
+    httpOnly: false,
+  });
+
+  return signJwt({ sub: user.userId });
+}
 
 export default {
   isNotLoggedIn: async (req: Request, res: Response, next: NextFunction) => {
@@ -19,8 +58,8 @@ export default {
       }
 
       if (!accesstoken) {
-        // return res.redirect('/users/refresh');
-        return next(new AppError('로그인하지 않았습니다.', 401));
+        accesstoken = await accessTokenReissue(req, res, next);
+        // return next(new AppError('로그인하지 않았습니다.', 401));
       }
 
       // Validate Access Token
