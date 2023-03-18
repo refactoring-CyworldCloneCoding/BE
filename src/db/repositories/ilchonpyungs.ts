@@ -37,6 +37,7 @@ class IlchonpyungsRepository {
       where: { ilchonpyungId },
     });
     ilchonpyungInfo.ilchonpyung = ilchonpyung;
+    ilchonpyungInfo.nick = nick;
     await Ilchonpyungs.save(ilchonpyungInfo);
     // await Ilchonpyungs.update(
     //   { ilchonpyung, nick },
