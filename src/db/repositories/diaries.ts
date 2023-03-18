@@ -1,5 +1,5 @@
 import { CreateDiaryForm, UpdateDiaryForm } from '../../interfaces/diary';
-import { Diaries, Comments } from '../entities';
+import { Diaries } from '../entities';
 
 class DiaryRepository {
   findAllDiary = async (myhomeId: number) => {

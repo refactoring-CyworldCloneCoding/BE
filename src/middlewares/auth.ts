@@ -18,8 +18,6 @@ export default {
         accesstoken = req.cookies.accesstoken;
       }
 
-      console.log('isNotLoggedIn - accesstoken : ', req.headers);
-
       if (!accesstoken) {
         // return res.redirect('/users/refresh');
         return next(new AppError('로그인하지 않았습니다.', 401));
@@ -74,7 +72,6 @@ export default {
       } else if (req.cookies.accesstoken) {
         accesstoken = req.cookies.accesstoken;
       }
-      console.log('isLoggedIn - accesstoken : ', accesstoken);
 
       if (accesstoken) {
         const error = new AppError('이미 로그인 되어있습니다.', 401);

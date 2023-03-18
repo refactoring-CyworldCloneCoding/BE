@@ -28,10 +28,10 @@ export class Diaries extends BaseEntity {
   diaryNo: number;
 
   @Column()
-  content: string;
+  content!: string;
 
-  @Column({default: undefined })
-  dirImg: string;
+  @Column({ nullable: true })
+  dirImg: string | null;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -13,7 +13,6 @@ class S3ImageController {
       acl: 'public-read',
       contentType: multerS3.AUTO_CONTENT_TYPE,
       key: function (req, file, cb) {
-        console.log(file);
         const ext = file.mimetype.split('/')[1];
         if (!['png', 'jpg', 'jpeg', 'gif'].includes(ext))
           return cb(new Error('이미지 파일이 아닙니다.'));
@@ -40,7 +39,7 @@ class S3ImageController {
           if (error) {
             console.log('err', error, error.stack);
           } else {
-            console.log(data, '정말 삭제 되었습니다.');
+            console.log(data, '삭제 되었습니다.');
           }
         });
       }

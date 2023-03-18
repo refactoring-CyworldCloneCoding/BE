@@ -8,9 +8,6 @@ class MyhomesRepositories extends Myhomes {
   createNewMyhome = async (userId: number) => {
     const saveMyhome = Myhomes.create({
       userId,
-      intro: '',
-      today: 0,
-      total: 0,
       user: await Users.findOne({ where: { userId } }),
     });
     return await Myhomes.save(saveMyhome);
