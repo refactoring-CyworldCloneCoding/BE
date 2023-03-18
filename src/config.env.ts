@@ -33,8 +33,8 @@ class dBConnection {
     this.DB_NAME = process.env[`DB_${DB[this.NODE_ENV]}_NAME`]!;
     this.DB_USER = process.env[`DB_${DB[this.NODE_ENV]}_USER`]!;
     this.DB_PASSWORD = process.env[`DB_${DB[this.NODE_ENV]}_PASSWORD`]!;
-    this.DB_SYNCHRONIZE = this.NODE_ENV === 'TEST' ? true : false;
-    this.DB_DROPSCHEMA = this.NODE_ENV === 'TEST' ? true : false;
+    this.DB_SYNCHRONIZE = this.NODE_ENV === 'PRD' ? false : true;
+    this.DB_DROPSCHEMA = this.NODE_ENV === 'PRD' ? false : true;
 
     const REDIS_HOST = process.env[`REDIS_${DB[this.NODE_ENV]}_HOST`]!;
     const REDIS_USER = process.env[`REDIS_${DB[this.NODE_ENV]}_USER`]!;
