@@ -2,12 +2,12 @@ import { Request, Response, NextFunction, CookieOptions } from 'express';
 import redis from '../db/cache/redis';
 import { Users } from '../db/entities';
 import AppError from '../utils/appError';
-import { signJwt, verifyJwt } from '../utils/jwt';
+import { decodeJwt, signJwt, verifyJwt } from '../utils/jwt';
 
 // Cookie options
-const accessTokenCookieOptions: CookieOptions = {
-  expires: new Date(60 * 60 * 12),
-  maxAge: 60 * 60 * 12,
+export const accessTokenCookieOptions: CookieOptions = {
+  expires: new Date(Date.now() + 12 * 60 * 60 * 1000),
+  maxAge: 12 * 60 * 60,
   httpOnly: true,
   sameSite: 'lax',
 };
@@ -17,22 +17,27 @@ async function accessTokenReissue(
   res: Response,
   next: NextFunction
 ) {
-  const refreshtoken = req.cookies.refreshtoken as string;
-
-  const decoded = verifyJwt<{ sub: string }>(refreshtoken);
   const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
+
+  const { userId } = decodeJwt<{ userId: number }>(req.cookies.accesstoken);
+
+  const session = await redis.get(userId);
+  if (!session) return next(new AppError(message, 403));
+  const refreshtoken = JSON.parse(session).refreshtoken as string;
+
+  const decoded = verifyJwt<{ userId: number }>(refreshtoken);
   if (!decoded) return next(new AppError(message, 403));
 
-  const session = await redis.get(decoded.sub);
-  if (!session) return next(new AppError(message, 403));
-
-  const user = await Users.findOne({
-    where: { userId: JSON.parse(session).userId },
-  });
+  const user = await Users.findOne({ where: { userId: decoded.userId } });
 
   if (!user) return next(new AppError(message, 403));
 
-  const accesstoken = signJwt({ sub: user.userId });
+  const accesstoken = signJwt({ userId: user.userId });
+
+  redis.set(
+    user.userId,
+    JSON.stringify({ userId: user.userId, refreshtoken })
+  );
 
   res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
   res.cookie('logged_in', true, {
@@ -40,7 +45,7 @@ async function accessTokenReissue(
     httpOnly: false,
   });
 
-  return signJwt({ sub: user.userId });
+  return accesstoken;
 }
 
 export default {
@@ -63,14 +68,14 @@ export default {
       }
 
       // Validate Access Token
-      const decoded = verifyJwt<{ sub: string }>(accesstoken);
+      const decoded = verifyJwt<{ userId: number }>(accesstoken);
 
       if (!decoded) {
         return next(new AppError(`잘못된 토큰 또는 사용자가 없습니다`, 401));
       }
 
       // Check if user has a valid session
-      const session = await redis.get(decoded.sub);
+      const session = await redis.get(decoded.userId);
 
       if (!session) {
         return next(new AppError(`사용자 세션이 만료되었습니다.`, 401));
@@ -78,7 +83,7 @@ export default {
 
       // Check if user still exist
       const user = await Users.findOne({
-        where: { userId: JSON.parse(session).userId },
+        where: { userId: decoded.userId },
       });
 
       if (!user) {
