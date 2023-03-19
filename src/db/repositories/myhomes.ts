@@ -32,7 +32,6 @@ class MyhomesRepositories extends Myhomes {
     const myhomeMaxId = myhomes[myhomes.length - 1].myhomeId;
     return await Myhomes.findOne({
       where: { myhomeId: myhomeMaxId },
-      // order: [['myhomeId', 'desc']],
     });
   };
 
@@ -62,12 +61,6 @@ class MyhomesRepositories extends Myhomes {
     findMyhome.total++;
     await Myhomes.save(findMyhome);
   };
-
-  // newTodayTotal = async ({ ip, time, myhomeId }: TodayForm) => {
-  //   await MyhomeCounts.update({ time }, { where: { ip, myhomeId } });
-  //   await Myhomes.increment({ total: 1 }, { where: { myhomeId } });
-  //   await Myhomes.update({ today: 1 }, { where: { myhomeId } });
-  // };
 
   introUpdate = async (myhomeId: number, intro: string) => {
     const findMyhome = await Myhomes.findOne({ where: { myhomeId } });
