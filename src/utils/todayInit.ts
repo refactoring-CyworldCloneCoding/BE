@@ -11,7 +11,7 @@ class TodayInits {
 
   is2AM = () => {
     const now = new Date();
-    return now.getHours() === 2 && now.getMinutes() === 0;
+    return now.getHours() === 0 && now.getMinutes() === 0;
   };
 
   initStart = async () => {

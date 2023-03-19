@@ -1,14 +1,12 @@
-import { Request, Response, NextFunction, CookieOptions } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { Users } from '../../services';
 import Joi from '../../utils/joi';
 import { UserInfo } from '../../interfaces/user';
-// import passport from 'passport';
 import redis from '../../db/cache/redis';
 import { decodeJwt, signJwt, verifyJwt } from '../../utils/jwt';
 import AppError from '../../utils/appError';
 import { accessTokenCookieOptions } from '../../middlewares/auth';
 
-// Only set secure to true in production
 if (process.env.NODE_ENV === 'production')
   accessTokenCookieOptions.secure = true;
 
@@ -45,23 +43,18 @@ export default {
   //로그인
   login: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Get the user from the collection
       const { email, password } = await Joi.loginSchema.validateAsync(req.body);
 
-      // Create the Access and refresh Tokens
       const { accesstoken, myhomeId } = await Users.userLogin(email, password);
 
-      // Send Access Token in Cookie
       res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
       res.cookie('logged_in', true, {
         ...accessTokenCookieOptions,
         httpOnly: false,
       });
 
-      // Send Access Token
       res.status(200).json({
-        status: 'success',
-        accesstoken: 'Bearer ' + accesstoken,
+        authorization: 'Bearer ' + accesstoken,
         myhomeId,
       });
     } catch (error) {
@@ -75,45 +68,39 @@ export default {
     next: NextFunction
   ) => {
     try {
-      const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
+      res.status(405).json({ msg: '구현되지 않은 기능입니다.' });
+      // const message = '액세스 토큰을 새로 발급 받을 수 없습니다.';
 
-      // Get the access token from cookie
-      const { userId } = decodeJwt<{ userId: number }>(req.cookies.accesstoken);
+      // const { userId } = decodeJwt<{ userId: number }>(req.cookies.accesstoken);
 
-      // Check if the user has a valid session
-      const session = await redis.get(userId);
-      if (!session) return next(new AppError(message, 403));
-      const refreshtoken = JSON.parse(session).refreshtoken as string;
+      // const session = await redis.get(userId);
+      // if (!session) return next(new AppError(message, 403));
+      // const refreshtoken = JSON.parse(session).refreshtoken as string;
 
-      // Validate the Refresh token
-      const decoded = verifyJwt<{ userId: number }>(refreshtoken);
-      if (!decoded) return next(new AppError(message, 403));
+      // const decoded = verifyJwt<{ userId: number }>(refreshtoken);
+      // if (!decoded) return next(new AppError(message, 403));
 
-      // Check if the user exist
-      const user = await Users.findUserMyhome(decoded.userId);
+      // const user = await Users.findUserMyhome(decoded.userId);
 
-      if (!user) return next(new AppError(message, 403));
+      // if (!user) return next(new AppError(message, 403));
 
-      // Sign new access token
-      const accesstoken = signJwt({ userId: user.userId });
+      // const accesstoken = signJwt({ userId: user.userId });
 
-      redis.set(
-        user.userId,
-        JSON.stringify({ userId: user.userId, refreshtoken })
-      );
+      // redis.set(
+      //   user.userId,
+      //   JSON.stringify({ userId: user.userId, refreshtoken })
+      // );
 
-      // Send the access token as cookie
-      res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
-      res.cookie('logged_in', true, {
-        ...accessTokenCookieOptions,
-        httpOnly: false,
-      });
+      // res.cookie('accesstoken', accesstoken, accessTokenCookieOptions);
+      // res.cookie('logged_in', true, {
+      //   ...accessTokenCookieOptions,
+      //   httpOnly: false,
+      // });
 
-      // Send response
-      res.status(200).json({
-        status: 'success',
-        accesstoken: 'Bearer ' + accesstoken,
-      });
+      // res.status(200).json({
+      //   status: 'success',
+      //   accesstoken: 'Bearer ' + accesstoken,
+      // });
     } catch (error) {
       next(error);
     }

@@ -31,7 +31,12 @@ export default {
     const findMyhome = await Myhomes.findUserMyhome(user.userId);
 
     // Sign the access token
-    const accesstoken = signJwt({ userId: user.userId });
+    const accesstoken = signJwt({
+      myhomeId: user.myhome.myhomeId,
+      userId: user.userId,
+      name: user.name,
+      gender: user.gender,
+    });
 
     // Sign the refresh token
     const refreshtoken = refresh({ userId: user.userId });
