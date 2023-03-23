@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import { Ilchonpyungs as IlchonpyungsType } from '../db/entities';
 import { Ilchonpyungs, Myhomes } from '../db/repositories';
 import { CreateIlchonpyungForm } from '../interfaces/Ilchonpyung';
+import datetime from '../utils/datetime';
 
 export default {
   // 일촌평 작성
@@ -43,8 +45,14 @@ export default {
   getBests: async (req: Request, res: Response) => {
     const { myhomeId } = req.params;
 
-    // 미니홈피의 기준인 userId를 parameter로 받아서 repo에 조회
-    return await Ilchonpyungs.getBests(+myhomeId);
+    const findIlchonpyungs = await Ilchonpyungs.getBests(+myhomeId);
+
+    findIlchonpyungs.map((best: IlchonpyungsType) => {
+      best.createdAt = datetime.createDatetime(best.createdAt);
+      best.updatedAt = datetime.createDatetime(best.updatedAt);
+    });
+
+    return findIlchonpyungs;
   },
 
   updateBest: async (req: Request, res: Response) => {
@@ -87,9 +95,8 @@ export default {
     const myhome = await Myhomes.findByMyhome(+myhomeId);
 
     if (!best || !myhome) throw new Error('잘못된 요청입니다.');
-    if (best.userId === user.userId || best.myhomeId === user.myhomeId) await Ilchonpyungs.deleteBest(+ilchonpyungId, +myhomeId);
+    if (best.userId === user.userId || best.myhomeId === user.myhomeId)
+      await Ilchonpyungs.deleteBest(+ilchonpyungId, +myhomeId);
     else throw new Error('본인 또는 작성자만 삭제할 수 있습니다.');
-
-    
   },
 };

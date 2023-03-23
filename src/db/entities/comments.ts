@@ -31,11 +31,11 @@ export class Comments extends BaseEntity {
   @Column()
   comment!: string;
 
- @CreateDateColumn({ type: 'datetime' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: string;
 
   @ManyToOne(() => Diaries, (diaries) => diaries.comments, {
     onDelete: 'CASCADE',

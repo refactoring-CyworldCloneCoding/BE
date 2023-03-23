@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { GuestBooks, Myhomes, Users } from '../db/repositories';
 import { GuestBooksCreateForm } from '../interfaces/guestbook';
 import { Guestbooks as GuestBooksModels } from '../db/entities';
-import env from '../config.env';
+import datetime from '../utils/datetime';
 
 class GuestBooksService {
   // 방명록 작성
@@ -43,6 +43,8 @@ class GuestBooksService {
     const books: Array<GuestBooksModels> = await GuestBooks.getBooks(+myhomeId);
     for (let i = 0; i < books.length; i++) {
       books[i].guestBookNum = i + 1;
+      books[i].createdAt = datetime.createDatetime(books[i].createdAt);
+      books[i].updatedAt = datetime.createDatetime(books[i].updatedAt);
     }
 
     return books.sort((a, b) => b.guestBookNum - a.guestBookNum);

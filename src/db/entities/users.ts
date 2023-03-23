@@ -40,11 +40,11 @@ export class Users extends BaseEntity {
   @Column({ default: 'user' })
   role: string;
 
- @CreateDateColumn({ type: 'datetime' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: string;
 
   @OneToOne(() => Myhomes, (myhome) => myhome.user)
   myhome!: Myhomes;

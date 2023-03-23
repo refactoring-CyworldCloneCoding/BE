@@ -3,6 +3,8 @@ import { Diaries, Myhomes } from '../db/repositories';
 import { CreateDiaryForm, UpdateDiaryForm } from '../interfaces/diary';
 import env from '../config.env';
 import AppError from '../utils/appError';
+import datetime from '../utils/datetime';
+import { Comments } from '../db/entities';
 
 class DiaryService {
   findAllDiary = async (myhomeId: number) => {
@@ -12,6 +14,14 @@ class DiaryService {
 
     for (let i = 0; i < allDiary.length; i++) {
       allDiary[i].diaryNo = i + 1;
+      allDiary[i].createdAt = datetime.createDatetime(allDiary[i].createdAt);
+      allDiary[i].updatedAt = datetime.createDatetime(allDiary[i].updatedAt);
+      if (allDiary[i].comments) {
+        allDiary[i].comments.map((comment: Comments)=> {
+          comment.createdAt = datetime.createDatetime(comment.createdAt);
+          comment.updatedAt = datetime.createDatetime(comment.updatedAt);
+        })
+      }
     }
 
     // 호출한 Diary들 중 가장 최근 게시글순으로 정렬
@@ -34,9 +44,7 @@ class DiaryService {
     const file = req.file as Express.MulterS3.File;
 
     const imageFileName = file ? file.key : null;
-    const dirImg = imageFileName
-      ? env.S3_STORAGE_URL + imageFileName
-      : null;
+    const dirImg = imageFileName ? env.S3_STORAGE_URL + imageFileName : null;
 
     const createDiary: CreateDiaryForm = {
       myhomeId: +myhomeId,

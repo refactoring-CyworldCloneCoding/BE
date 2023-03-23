@@ -30,11 +30,11 @@ export class Ilchonpyungs extends BaseEntity {
   @Column()
   ilchonpyung!: string;
 
- @CreateDateColumn({ type: 'datetime' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: string;
 
   @ManyToOne(() => Users, (user) => user.ilchonpyungs)
   user!: Users;

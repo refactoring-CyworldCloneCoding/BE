@@ -33,11 +33,11 @@ export class Guestbooks extends BaseEntity {
   @Column()
   bookImage!: string;
 
- @CreateDateColumn({ type: 'datetime' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: string;
 
   @ManyToOne(() => Users, (user) => user.guestbooks)
   user!: Users;

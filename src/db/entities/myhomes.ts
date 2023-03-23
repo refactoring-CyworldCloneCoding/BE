@@ -35,11 +35,11 @@ export class Myhomes extends BaseEntity {
   @Column({ default: 0 })
   total: number;
 
- @CreateDateColumn({ type: 'datetime' })
-  createdAt: Date;
+  @CreateDateColumn()
+  createdAt: string;
 
-  @UpdateDateColumn({ type: 'datetime' })
-  updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: string;
 
   @OneToOne(() => Users, (users) => users.myhome)
   @JoinColumn()
