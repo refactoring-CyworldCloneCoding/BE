@@ -16,7 +16,7 @@ class S3ImageController {
         const ext = file.mimetype.split('/')[1];
         if (!['png', 'jpg', 'jpeg', 'gif'].includes(ext))
           return cb(new Error('이미지 파일이 아닙니다.'));
-        cb(null, `diaryImages/${Date.now()}.${ext}`);
+        cb(null, `/${Date.now()}.${ext}`);
       },
     }),
     limits: { fileSize: 10 * 1024 * 1024 },

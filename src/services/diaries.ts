@@ -29,12 +29,13 @@ class DiaryService {
 
     if (!myhome) throw new AppError('잘못된 요청입니다.', 400);
     if (!content) throw new AppError('내용을 입력해주세요!', 400);
-    if (user.userId !== myhome.userId) throw new AppError('작성 권한이 없습니다.', 403);
+    if (user.userId !== myhome.userId)
+      throw new AppError('작성 권한이 없습니다.', 403);
     const file = req.file as Express.MulterS3.File;
 
     const imageFileName = file ? file.key : null;
     const dirImg = imageFileName
-      ? env.S3_STORAGE_URL + imageFileName
+      ? env.S3_STORAGE_URL + 'diaryImages' + imageFileName
       : null;
 
     const createDiary: CreateDiaryForm = {
@@ -59,10 +60,11 @@ class DiaryService {
 
     const imageFileName = file ? file.key : undefined;
     const dirImg = imageFileName
-      ? env.S3_STORAGE_URL + imageFileName
+      ? env.S3_STORAGE_URL + 'diaryImages' + imageFileName
       : undefined;
     // 본인 이외의 사람이 다이어리 수정시 예외처리
-    if (user.userId !== diary.userId) throw new AppError('수정 권한이 없습니다.', 403);
+    if (user.userId !== diary.userId)
+      throw new AppError('수정 권한이 없습니다.', 403);
 
     const updateDiary: UpdateDiaryForm = {
       diaryId: +diaryId,
@@ -76,7 +78,8 @@ class DiaryService {
   deleteDiary = async (diaryId: number, userId: number) => {
     const diary = await Diaries.findOneDiary(diaryId);
     if (!diary) throw new AppError('잘못된 요청입니다.', 400);
-    if (userId !== diary.userId) throw new AppError('삭제 권한이 없습니다.', 403);
+    if (userId !== diary.userId)
+      throw new AppError('삭제 권한이 없습니다.', 403);
     await Diaries.deleteDiary(diaryId);
   };
 }

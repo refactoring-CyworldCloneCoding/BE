@@ -104,8 +104,8 @@ export default {
     return await Myhomes.findUserMyhome(userId);
   },
 
-  introupdate: async (myhomeId: number, intro: string) => {
-    await Myhomes.introUpdate(myhomeId, intro);
+  introupdate: async (myhomeId: number, intro: string, profile: string) => {
+    await Myhomes.introUpdate(myhomeId, intro, profile);
   },
 
   //도토리

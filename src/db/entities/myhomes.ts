@@ -26,6 +26,9 @@ export class Myhomes extends BaseEntity {
   @Column({ default: '' })
   intro: string;
 
+  @Column()
+  profile!: string;
+
   @Column({ default: 0 })
   today: number;
 
