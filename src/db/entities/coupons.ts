@@ -21,7 +21,7 @@ export class Coupons extends BaseEntity {
   @Column({ default: false })
   status: boolean;
 
-  @CreateDateColumn()
+ @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
   @UpdateDateColumn()

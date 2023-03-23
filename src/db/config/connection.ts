@@ -12,4 +12,5 @@ export const typeORMConfig = new DataSource({
   entities,
   synchronize: env.DB_SYNCHRONIZE,
   dropSchema: env.DB_DROPSCHEMA,
+  timezone: 'Z',
 });

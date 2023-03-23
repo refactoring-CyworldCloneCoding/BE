@@ -33,10 +33,10 @@ export class Diaries extends BaseEntity {
   @Column({ nullable: true })
   dirImg: string | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 
   @OneToMany(() => Comments, (comments) => comments.diary, {

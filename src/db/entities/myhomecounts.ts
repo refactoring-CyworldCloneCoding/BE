@@ -21,9 +21,9 @@ export class MyhomeCounts extends BaseEntity {
   @Column()
   time!: string;
 
-  @CreateDateColumn()
+ @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 }

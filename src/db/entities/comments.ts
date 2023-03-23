@@ -31,10 +31,10 @@ export class Comments extends BaseEntity {
   @Column()
   comment!: string;
 
-  @CreateDateColumn()
+ @CreateDateColumn({ type: 'datetime' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'datetime' })
   updatedAt: Date;
 
   @ManyToOne(() => Diaries, (diaries) => diaries.comments, {
