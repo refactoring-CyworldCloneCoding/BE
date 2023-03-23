@@ -68,6 +68,7 @@ async function accessTokenReissue(
     res.status(401).json({
       authorization: 'Bearer ' + newAccesstoken,
       myhomeId: user.userId,
+      msg: '토큰 재발급',
     });
   } catch (error) {
     next(error);
