@@ -9,7 +9,6 @@ export const accessTokenCookieOptions: CookieOptions = {
   expires: new Date(Date.now() + 12 * 60 * 60 * 1000),
   maxAge: 12 * 60 * 60,
   httpOnly: true,
-  sameSite: 'lax',
 };
 
 const invalidError = new AppError('로그인이 필요한 기능입니다.', 401);
@@ -66,7 +65,7 @@ async function accessTokenReissue(
       httpOnly: false,
     });
 
-    res.status(200).json({
+    res.status(401).json({
       authorization: 'Bearer ' + newAccesstoken,
       myhomeId: user.userId,
     });
