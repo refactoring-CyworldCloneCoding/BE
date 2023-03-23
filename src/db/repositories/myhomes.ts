@@ -5,9 +5,10 @@ class MyhomesRepositories extends Myhomes {
   constructor() {
     super();
   }
-  createNewMyhome = async (userId: number) => {
+  createNewMyhome = async (userId: number, profile: string) => {
     const saveMyhome = Myhomes.create({
       userId,
+      profile,
       user: await Users.findOne({ where: { userId } }),
     });
     return await Myhomes.save(saveMyhome);
@@ -62,9 +63,10 @@ class MyhomesRepositories extends Myhomes {
     await Myhomes.save(findMyhome);
   };
 
-  introUpdate = async (myhomeId: number, intro: string) => {
+  introUpdate = async (myhomeId: number, intro: string, profile: string) => {
     const findMyhome = await Myhomes.findOne({ where: { myhomeId } });
-    findMyhome.intro = intro;
+    if (intro) findMyhome.intro = intro;
+    if (profile) findMyhome.profile = profile;
     await Myhomes.save(findMyhome);
     return findMyhome;
   };

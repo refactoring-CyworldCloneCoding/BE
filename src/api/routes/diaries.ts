@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Diaries } from '../controllers';
 import auth from '../../middlewares/auth';
-import S3Upload from '../../middlewares/diaryUpload'
+import S3Upload from '../../middlewares/S3Upload'
 
 const router = Router();
 

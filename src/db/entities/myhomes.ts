@@ -26,6 +26,9 @@ export class Myhomes extends BaseEntity {
   @Column({ default: '' })
   intro: string;
 
+  @Column()
+  profile: string;
+
   @Column({ default: 0 })
   today: number;
 
@@ -33,10 +36,10 @@ export class Myhomes extends BaseEntity {
   total: number;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: string;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: string;
 
   @OneToOne(() => Users, (users) => users.myhome)
   @JoinColumn()

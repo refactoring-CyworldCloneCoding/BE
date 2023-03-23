@@ -6,6 +6,7 @@ import redis from '../../db/cache/redis';
 import { decodeJwt, signJwt, verifyJwt } from '../../utils/jwt';
 import AppError from '../../utils/appError';
 import { accessTokenCookieOptions } from '../../middlewares/auth';
+import env from '../../config.env';
 
 if (process.env.NODE_ENV === 'production')
   accessTokenCookieOptions.secure = true;
@@ -165,7 +166,14 @@ export default {
       if (userId != findMyHome.userId)
         throw new AppError('본인 소개글만 수정가능합니다.', 403);
 
-      await Users.introupdate(+myhomeId, intro);
+      const file = req.file as Express.MulterS3.File;
+
+      const imageFileName = file ? file.key : null;
+      const profile = imageFileName
+        ? env.S3_STORAGE_URL + imageFileName
+        : null;
+
+      await Users.introupdate(+myhomeId, intro, profile);
       res.status(201).json({ msg: 'intro가 수정되었습니다' });
     } catch (error) {
       next(error);

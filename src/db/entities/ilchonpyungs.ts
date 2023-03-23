@@ -31,10 +31,10 @@ export class Ilchonpyungs extends BaseEntity {
   ilchonpyung!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: string;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: string;
 
   @ManyToOne(() => Users, (user) => user.ilchonpyungs)
   user!: Users;

@@ -34,10 +34,10 @@ export class Guestbooks extends BaseEntity {
   bookImage!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: string;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: string;
 
   @ManyToOne(() => Users, (user) => user.guestbooks)
   user!: Users;

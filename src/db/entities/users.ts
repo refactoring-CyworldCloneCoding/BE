@@ -41,10 +41,10 @@ export class Users extends BaseEntity {
   role: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: string;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: string;
 
   @OneToOne(() => Myhomes, (myhome) => myhome.user)
   myhome!: Myhomes;

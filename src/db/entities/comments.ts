@@ -32,13 +32,15 @@ export class Comments extends BaseEntity {
   comment!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: string;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: string;
 
-  @ManyToOne(() => Diaries, (diaries) => diaries.comments)
-  diary!: Diaries;
+  @ManyToOne(() => Diaries, (diaries) => diaries.comments, {
+    onDelete: 'CASCADE',
+  })
+  diary: Diaries;
 
   @ManyToOne(() => Users, (user) => user.comments)
   user!: Diaries;

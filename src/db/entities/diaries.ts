@@ -34,14 +34,16 @@ export class Diaries extends BaseEntity {
   dirImg: string | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt: string;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt: string;
 
-  @OneToMany(() => Comments, (comments) => comments.diary)
+  @OneToMany(() => Comments, (comments) => comments.diary, {
+    cascade: true,
+  })
   @JoinColumn()
-  comments!: Comments[];
+  comments: Comments[];
 
   @ManyToOne(() => Users, (user) => user.diaries)
   user!: Users;

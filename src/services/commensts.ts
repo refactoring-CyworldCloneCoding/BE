@@ -1,10 +1,17 @@
 import { Request, Response } from 'express';
+import { Comments as CommentsType } from '../db/entities';
 import { Comments, Diaries, Myhomes } from '../db/repositories';
 import { CreateCommentsForm } from '../interfaces/comment';
+import datetime from '../utils/datetime';
 
 class CommentService {
   findAllComment = async (myhomeId: number, diaryId: number) => {
-    return await Comments.findAllComment(myhomeId, diaryId);
+    const findComment = await Comments.findAllComment(myhomeId, diaryId);
+    findComment.map((comment:CommentsType) => {
+          comment.createdAt = datetime.createDatetime(comment.createdAt);
+          comment.updatedAt = datetime.createDatetime(comment.updatedAt);
+    })
+    return findComment;
   };
 
   createComment = async (req: Request, res: Response) => {
