@@ -39,9 +39,11 @@ export class Diaries extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Comments, (comments) => comments.diary)
+  @OneToMany(() => Comments, (comments) => comments.diary, {
+    cascade: true,
+  })
   @JoinColumn()
-  comments!: Comments[];
+  comments: Comments[];
 
   @ManyToOne(() => Users, (user) => user.diaries)
   user!: Users;
