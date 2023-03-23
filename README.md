@@ -18,8 +18,8 @@
 # 🐤 팀 소개
 | 역할 | 이름 | git |
 | :--: | :--: | :----:|
-| Front-end | 정도은 | https://github.com/do-eun|
 | Back-end | 장용호 | https://github.com/JangKroed|
+| Front-end | 정도은 | https://github.com/do-eun|
 
 # 🐣 주요 페이지
 | <img src="https://user-images.githubusercontent.com/112849712/223851413-5c4a5d52-0a11-46ba-bd8e-c1325d9221c1.png" width="220" />  | <img src="https://user-images.githubusercontent.com/112849712/223851419-56aa06be-3c92-4bbf-ba7a-12642801ba96.png" width="220" />  | <img src="https://user-images.githubusercontent.com/112849712/223851422-1ef6d368-972e-44d2-b78f-602f243d3e72.png" width="220" />  |<img src="https://user-images.githubusercontent.com/112849712/223851429-f140eb81-f60b-4f11-8619-62bde752e443.png" width="220" /> |
