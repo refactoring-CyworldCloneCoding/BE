@@ -170,7 +170,7 @@ export default {
 
       const imageFileName = file ? file.key : null;
       const profile = imageFileName
-        ? env.S3_STORAGE_URL + 'profile' + imageFileName
+        ? env.S3_STORAGE_URL + imageFileName
         : null;
 
       await Users.introupdate(+myhomeId, intro, profile);

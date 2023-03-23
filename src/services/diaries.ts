@@ -35,7 +35,7 @@ class DiaryService {
 
     const imageFileName = file ? file.key : null;
     const dirImg = imageFileName
-      ? env.S3_STORAGE_URL + 'diaryImages' + imageFileName
+      ? env.S3_STORAGE_URL + imageFileName
       : null;
 
     const createDiary: CreateDiaryForm = {
@@ -60,7 +60,7 @@ class DiaryService {
 
     const imageFileName = file ? file.key : undefined;
     const dirImg = imageFileName
-      ? env.S3_STORAGE_URL + 'diaryImages' + imageFileName
+      ? env.S3_STORAGE_URL + imageFileName
       : undefined;
     // 본인 이외의 사람이 다이어리 수정시 예외처리
     if (user.userId !== diary.userId)

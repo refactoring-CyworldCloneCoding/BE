@@ -3,7 +3,7 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 import { s3 } from '../db/config/s3';
 import env from '../config.env';
-import { Diaries } from '../db/repositories';
+import { Diaries, Myhomes } from '../db/entities';
 
 class S3ImageController {
   upload = multer({
@@ -16,7 +16,7 @@ class S3ImageController {
         const ext = file.mimetype.split('/')[1];
         if (!['png', 'jpg', 'jpeg', 'gif'].includes(ext))
           return cb(new Error('이미지 파일이 아닙니다.'));
-        cb(null, `/${Date.now()}.${ext}`);
+        cb(null, `images/${Date.now()}.${ext}`);
       },
     }),
     limits: { fileSize: 10 * 1024 * 1024 },
@@ -24,11 +24,23 @@ class S3ImageController {
 
   delete_file = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { diaryId } = req.params;
-      const imgName = await Diaries.findOneDiary(+diaryId);
+      const { diaryId, myhomeId } = req.params;
+      let imgName: string;
 
-      if (imgName?.dirImg) {
-        const s3ImgName = imgName.dirImg!.split('/').pop();
+      if (diaryId) {
+        const findDiary = await Diaries.findOne({
+          where: { diaryId: Number(diaryId) },
+        });
+        imgName = findDiary.dirImg;
+      } else if (myhomeId) {
+        const findMyhome = await Myhomes.findOne({
+          where: { myhomeId: Number(myhomeId) },
+        });
+        imgName = findMyhome.profile;
+      }
+
+      if (imgName) {
+        const s3ImgName = imgName.split('/').pop();
 
         let params = {
           Bucket: env.S3_STORAGE_NAME,

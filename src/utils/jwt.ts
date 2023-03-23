@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 export const signJwt = (payload: Object = {}) => {
   return jwt.sign(payload, env.JWT_KEY, {
-    expiresIn: '10s',
+    expiresIn: '12h',
     algorithm: 'HS256',
   });
 };
