@@ -26,18 +26,12 @@ export default {
       if (name.includes(password) || password.includes(name))
         throw new AppError('이름과 비밀번호를 다른형식으로 설정해주세요.', 400);
 
-      const profile =
-        gender === '남자'
-          ? `${env.S3_STORAGE_URL}default/boy.png`
-          : `${env.S3_STORAGE_URL}default/girl.png`;
-
       const users: UserInfo = {
         email,
         name,
         password,
         gender,
         birth,
-        profile,
       };
 
       await Users.createUser(users);

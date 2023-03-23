@@ -5,11 +5,12 @@ class MyhomesRepositories extends Myhomes {
   constructor() {
     super();
   }
-  createNewMyhome = async (userId: number) => {
+  createNewMyhome = async (userId: number, profile: string) => {
     const saveMyhome = Myhomes.create({
       userId,
       user: await Users.findOne({ where: { userId } }),
     });
+    saveMyhome.profile = profile;
     return await Myhomes.save(saveMyhome);
   };
 

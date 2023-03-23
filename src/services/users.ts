@@ -5,15 +5,21 @@ import bcrypt from 'bcrypt';
 import { UserInfo } from '../interfaces/user';
 import AppError from '../utils/appError';
 import redis from '../db/cache/redis';
+import env from '../config.env';
 
 export default {
   createUser: async (user: UserInfo) => {
     const hashed = await bcrypt.hash(user.password, 10);
     user.email += '@cyworld.com';
     user.password = hashed;
+    
+      const profile =
+        user.gender === '남자'
+          ? `${env.S3_STORAGE_URL}default/boy.png`
+          : `${env.S3_STORAGE_URL}default/girl.png`;
 
     const findUserId = await Users.createUser(user);
-    await Myhomes.createNewMyhome(findUserId.userId);
+    await Myhomes.createNewMyhome(findUserId.userId, profile);
   },
 
   emailDuplicates: async (email: string) => {

@@ -4,7 +4,6 @@ interface UserInfo {
   password: string;
   gender: string;
   birth: string;
-  profile: string;
   refreshToken?: string;
 }
 
