@@ -3,7 +3,6 @@ import { Users } from '../../services';
 import Joi from '../../utils/joi';
 import { UserInfo } from '../../interfaces/user';
 import redis from '../../db/cache/redis';
-import { decodeJwt, signJwt, verifyJwt } from '../../utils/jwt';
 import AppError from '../../utils/appError';
 import { accessTokenCookieOptions } from '../../middlewares/auth';
 import env from '../../config.env';

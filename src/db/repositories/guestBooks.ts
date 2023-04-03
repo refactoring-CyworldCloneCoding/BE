@@ -2,15 +2,8 @@ import { GuestBooksCreateForm } from '../../interfaces/guestbook';
 import { Guestbooks } from '../entities';
 
 class GuestBooksRepository {
-  createBook = async (CreateForm: GuestBooksCreateForm) => {
-    const createInfo = Guestbooks.create({
-      myhomeId: CreateForm.myhomeId,
-      userId: CreateForm.userId,
-      guestBookNum: 0,
-      name: CreateForm.name,
-      guestBook: CreateForm.guestBook,
-      bookImage: CreateForm.bookImage,
-    });
+  createBook = async (createForm: GuestBooksCreateForm) => {
+    const createInfo = Guestbooks.create({ ...createForm });
     await Guestbooks.save(createInfo);
   };
 
