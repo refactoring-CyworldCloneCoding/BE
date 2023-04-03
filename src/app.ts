@@ -6,6 +6,9 @@ import router from './api/routes/index';
 import env from './config.env';
 import todayInit from './utils/todayInit';
 import helmet from 'helmet';
+import passport from 'passport';
+import passportConfig from './passport';
+passportConfig();
 
 const app = express();
 
@@ -32,6 +35,9 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 // 5. Cors
 app.use(
   cors({
@@ -55,7 +61,7 @@ app.get(
   (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({
       status: 'success',
-      message: 'Welcome to CodevoWeb😂😂👈👈',
+      message: 'Welcome to Web😂😂👈👈',
     });
   }
 );

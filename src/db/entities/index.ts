@@ -5,6 +5,7 @@ import { Ilchonpyungs } from './ilchonpyungs';
 import { Comments } from './comments';
 import { Diaries } from './diaries';
 import { Myhomes } from './myhomes';
+import { Ilchons } from './ilchons';
 import { Users } from './users';
 
 export {
@@ -15,5 +16,6 @@ export {
   Comments,
   Diaries,
   Myhomes,
+  Ilchons,
   Users,
 };

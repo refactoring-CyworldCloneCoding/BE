@@ -1,10 +1,11 @@
 interface UserInfo {
   email: string;
   name: string;
-  password: string;
+  password?: string;
   gender: string;
   birth: string;
-  refreshToken?: string;
+  snsId?: string;
+  provider?: string;
 }
 
 interface PayloadI {

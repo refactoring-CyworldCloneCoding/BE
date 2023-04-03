@@ -9,12 +9,14 @@ import {
   OneToOne,
   OneToMany,
 } from 'typeorm';
-import { Comments } from './comments';
-import { Diaries } from './diaries';
-import { Guestbooks } from './guestbooks';
-import { Ilchonpyungs } from './ilchonpyungs';
-import { Myhomes } from './myhomes';
-// import bcrypt from 'bcrypt';
+import {
+  Comments,
+  Diaries,
+  Guestbooks,
+  Ilchonpyungs,
+  Myhomes,
+  Ilchons,
+} from '.';
 
 @Entity()
 @Unique(['email'])
@@ -28,7 +30,7 @@ export class Users extends BaseEntity {
   @Column()
   name!: string;
 
-  @Column()
+  @Column({ default: '' })
   password!: string;
 
   @Column()
@@ -40,6 +42,12 @@ export class Users extends BaseEntity {
   @Column({ default: 'user' })
   role: string;
 
+  @Column({ default: 'local' })
+  provider: string;
+
+  @Column({ default: '' })
+  snsId: string;
+
   @CreateDateColumn()
   createdAt: string;
 
@@ -48,6 +56,9 @@ export class Users extends BaseEntity {
 
   @OneToOne(() => Myhomes, (myhome) => myhome.user)
   myhome!: Myhomes;
+
+  @OneToMany(() => Ilchons, (ilchons) => ilchons.user)
+  ilchons!: Ilchons[];
 
   @OneToMany(() => Diaries, (diaries) => diaries.user)
   diaries!: Diaries[];
@@ -60,9 +71,4 @@ export class Users extends BaseEntity {
 
   @OneToMany(() => Guestbooks, (guestbooks) => guestbooks.user)
   guestbooks!: Guestbooks[];
-
-  // async validatePassword(password: string): Promise<boolean> {
-  //   const isValid: boolean = await bcrypt.compare(password, this.password);
-  //   return isValid;
-  // }
 }

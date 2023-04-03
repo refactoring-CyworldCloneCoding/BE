@@ -28,7 +28,6 @@ class GuestBooksService {
     const CreateForm: GuestBooksCreateForm = {
       myhomeId: +myhomeId,
       userId: user.userId,
-      guestBookNum: 0,
       name: user.name,
       guestBook: guestbook,
       bookImage,
