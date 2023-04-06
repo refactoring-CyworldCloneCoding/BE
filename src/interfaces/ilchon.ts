@@ -1,10 +1,10 @@
 interface IlchonInfo {
-  reqId: number;
-  resId: number;
-  reqName: string;
-  resName: string;
-  reqIlchonName: string;
-  resIlchonName: string;
+  senderId: number;
+  recipientId: number;
+  senderName: string;
+  recipientName: string;
+  senderIlchonName: string;
+  recipientIlchonName: string;
   state?: string;
 }
 

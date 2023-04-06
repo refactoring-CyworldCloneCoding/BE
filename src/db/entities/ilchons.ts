@@ -15,22 +15,22 @@ export class Ilchons extends BaseEntity {
   ilchonId!: number;
 
   @Column()
-  reqId!: number;
+  senderId!: number;
 
   @Column()
-  resId!: number;
+  recipientId!: number;
 
   @Column()
-  reqName!: string;
+  senderName!: string;
 
   @Column()
-  resName!: string;
+  recipientName!: string;
 
   @Column()
-  reqIlchonName!: string;
+  senderIlchonName!: string;
 
   @Column()
-  resIlchonName!: string;
+  recipientIlchonName!: string;
 
   @Column({ default: 'standby' })
   state: string;

@@ -1,18 +1,17 @@
 import { Request, Response } from 'express';
 import { Ilchons, Users } from '../db/repositories';
 import AppError from '../utils/appError';
-import datetime from '../utils/datetime';
 import { IlchonInfo } from '../interfaces/ilchon';
 
 class IlchonsService {
   ask = async (createIlchon: IlchonInfo) => {
-    if (createIlchon.reqId === createIlchon.resId)
+    if (createIlchon.senderId === createIlchon.recipientId)
       throw new AppError('잘못된 요청입니다.', 400);
 
-    const findOutcome = await Ilchons.findOutcome(createIlchon.reqId);
+    const findOutcome = await Ilchons.findOutcome(createIlchon.senderId);
 
     findOutcome.map((ilchon) => {
-      if (ilchon.resId === createIlchon.reqId)
+      if (ilchon.recipientId === createIlchon.senderId)
         throw new AppError('잘못된 요청입니다.', 400);
     });
 
@@ -31,21 +30,15 @@ class IlchonsService {
     // return findIlchons;
   };
 
-  reAsk = async (req: Request) => {
+  reAsk = async (req: Request, res: Response) => {
     const { ilchonId } = req.params;
-    const { reqId, resId, reqName, resName, reqIlchonName, resIlchonName } =
-      req.body;
+    const ilchonValidation = await this.validation(req, res);
 
     const findIlchon = await Ilchons.findIlchon(Number(ilchonId));
     if (!findIlchon) throw new AppError('잘못된 요청입니다.', 400);
 
     const ilchonReAsk: IlchonInfo = {
-      reqId,
-      resId,
-      reqName,
-      resName,
-      reqIlchonName,
-      resIlchonName,
+      ...ilchonValidation,
       state: 'reAsk',
     };
 
@@ -54,7 +47,7 @@ class IlchonsService {
     return '재신청이 완료되었습니다.';
   };
 
-  accept = async (req: Request) => {
+  accept = async (req: Request, res: Response) => {
     const { ilchonId } = req.params;
     const { state } = req.body;
     const findIlchon = await Ilchons.findIlchon(Number(ilchonId));
@@ -65,7 +58,7 @@ class IlchonsService {
     return '일촌신청을 수락하였습니다.';
   };
 
-  refuse = async (req: Request) => {
+  refuse = async (req: Request, res: Response) => {
     const { ilchonId } = req.params;
     const { state } = req.body;
     const findIlchon = await Ilchons.findIlchon(Number(ilchonId));
@@ -83,32 +76,25 @@ class IlchonsService {
     await Ilchons.deleteIlchon(ilchonId);
   };
 
-  validation = async (req: Request): Promise<IlchonInfo> => {
-    const { reqId, resId, reqName, resName, reqIlchonName, resIlchonName } =
-      req.body;
+  validation = async (req: Request, res: Response): Promise<IlchonInfo> => {
+    const { recipientId, senderIlchonName, recipientIlchonName } = req.body;
+    const { userId } = res.app.locals.user;
 
-    if (
-      !reqId ||
-      !resId ||
-      !reqName ||
-      !resName ||
-      !reqIlchonName ||
-      !resIlchonName
-    )
+    if (!recipientId || !senderIlchonName || !recipientIlchonName)
       throw new AppError('입력하지 않은 항목이 있습니다.', 400);
 
-    const findReqUser = await Users.findByUser(Number(reqId));
-    const findResUser = await Users.findByUser(Number(resId));
-    if (!findReqUser || !findResUser)
+    const findSenderUser = await Users.findByUser(Number(userId));
+    const findRecipientUser = await Users.findByUser(Number(recipientId));
+    if (!findSenderUser || !findRecipientUser)
       throw new AppError('잘못된 요청입니다.', 400);
 
     return {
-      reqId,
-      resId,
-      reqName,
-      resName,
-      reqIlchonName,
-      resIlchonName,
+      senderId: Number(userId),
+      recipientId,
+      senderName: findSenderUser.name,
+      recipientName: findRecipientUser.name,
+      senderIlchonName,
+      recipientIlchonName,
     };
   };
 }

@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { Ilchons } from '../../services';
 import AppError from '../../utils/appError';
-import { IlchonInfo } from '../../interfaces/ilchon';
 
 class IlchonsControllers {
   ask = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const createIlchon = await Ilchons.validation(req);
+      const createIlchon = await Ilchons.validation(req, res);
 
       await Ilchons.ask(createIlchon);
 
@@ -37,9 +36,9 @@ class IlchonsControllers {
       if (!state) throw new AppError('잘못된 요청입니다.', 400);
 
       const ilchonHandler = {
-        reAsk: await Ilchons.reAsk(req),
-        accept: await Ilchons.accept(req),
-        refuse: await Ilchons.refuse(req),
+        reAsk: await Ilchons.reAsk(req, res),
+        accept: await Ilchons.accept(req, res),
+        refuse: await Ilchons.refuse(req, res),
       };
 
       const msg: string = ilchonHandler[state];

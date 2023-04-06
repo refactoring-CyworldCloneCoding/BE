@@ -9,7 +9,7 @@ class IlchonsRepository {
   };
 
   getList = async (userId: number) => {
-    return await Ilchons.find({ where: { reqId: userId } });
+    return await Ilchons.find({ where: { senderId: userId } });
   };
 
   reAsk = async (ilchonReAsk: IlchonInfo, ilchonId: number) => {
@@ -37,11 +37,11 @@ class IlchonsRepository {
   };
 
   findAsk = async (userId: number) => {
-    return await Ilchons.find({ where: { reqId: userId } });
+    return await Ilchons.find({ where: { senderId: userId } });
   };
 
   findOutcome = async (userId: number) => {
-    return await Ilchons.find({ where: { resId: userId } });
+    return await Ilchons.find({ where: { recipientId: userId } });
   };
 }
 
