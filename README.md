@@ -36,5 +36,5 @@
 
 
 # 🐔 API 명세서
->**[▶ 추억의 싸이월드 API 명세서 바로가기](https://www.notion.so/9df4dce69a2f469c8dd1f334d6995b52?v=3a002b5c42954179ba9b23facd2b4400)**
+>**[▶ 추억의 싸이월드 API 명세서 바로가기](https://jangs-organization.gitbook.io/api/)**
 
