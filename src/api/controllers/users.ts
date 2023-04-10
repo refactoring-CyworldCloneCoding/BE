@@ -22,7 +22,7 @@ export default {
       const emailcheck = await Users.emailDuplicates(email);
       if (emailcheck) throw new AppError('이메일 중복검사를 해주세요.', 409);
 
-      if (name.includes(password) || password.includes(name))
+      if (email.includes(password) || password.includes(email))
         throw new AppError('이름과 비밀번호를 다른형식으로 설정해주세요.', 400);
 
       const users: UserInfo = {
@@ -137,7 +137,7 @@ export default {
   surfing: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await Users.surfing();
-      res.status(200).send({ data: result!.myhomeId });
+      res.status(200).send({ myhomeId: result!.myhomeId });
     } catch (error) {
       next(error);
     }
@@ -161,7 +161,7 @@ export default {
       const { userId } = res.app.locals.user;
       const findMyHome = await Users.findByMyhome(+myhomeId);
 
-      if (!findMyHome) throw new AppError('잘못된 요청입니다.', 403);
+      if (!findMyHome) throw new AppError('잘못된 요청입니다.', 404);
       if (userId != findMyHome.userId)
         throw new AppError('본인 소개글만 수정가능합니다.', 403);
 
@@ -173,7 +173,7 @@ export default {
         : null;
 
       await Users.introupdate(+myhomeId, intro, profile);
-      res.status(201).json({ msg: 'intro가 수정되었습니다' });
+      res.status(201).json({ msg: 'intro가 수정되었습니다.' });
     } catch (error) {
       next(error);
     }

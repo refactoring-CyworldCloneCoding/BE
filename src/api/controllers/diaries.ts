@@ -16,7 +16,7 @@ class DiariesControllers {
   createDiary = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await Diaries.createDiary(req, res);
-      res.status(200).json({ msg: '작성되었습니다.' });
+      res.status(201).json({ msg: '작성되었습니다.' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);

@@ -28,7 +28,7 @@ export default {
 
   userLogin: async (email: string, password: string) => {
     const user = await Users.findOneEmail(email);
-    if (!user) throw new AppError('가입하신 회원이 아닙니다.', 400);
+    if (!user) throw new AppError('이메일 혹은 비밀번호를 확인해주세요.', 400);
 
     const isEqual = await bcrypt.compare(password, user.password);
     if (!isEqual)

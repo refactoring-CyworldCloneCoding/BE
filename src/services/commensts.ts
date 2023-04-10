@@ -3,9 +3,14 @@ import { Comments as CommentsType } from '../db/entities';
 import { Comments, Diaries, Myhomes } from '../db/repositories';
 import { CreateCommentsForm } from '../interfaces/comment';
 import datetime from '../utils/datetime';
+import AppError from '../utils/appError';
 
 class CommentService {
   findAllComment = async (myhomeId: number, diaryId: number) => {
+    const myhome = await Myhomes.findByMyhome(+myhomeId);
+    const diary = await Diaries.findOneDiary(+diaryId);
+    if (!myhome || !diary) throw new AppError('잘못된 요청입니다.', 400);
+
     const findComment = await Comments.findAllComment(myhomeId, diaryId);
     findComment.map((comment:CommentsType) => {
           comment.createdAt = datetime.createDatetime(comment.createdAt);
@@ -19,11 +24,11 @@ class CommentService {
     const { userId, name } = res.app.locals.user;
     const { comment } = req.body;
 
-    if (!comment) throw new Error('댓글을 작성해주세요.');
+    if (!comment) throw new AppError('댓글을 작성해주세요.', 400);
 
     const myhome = await Myhomes.findByMyhome(+myhomeId);
     const diary = await Diaries.findOneDiary(+diaryId);
-    if (!myhome || !diary) throw new Error('잘못된 요청입니다.');
+    if (!myhome || !diary) throw new AppError('잘못된 요청입니다.', 400);
 
     const createForm: CreateCommentsForm = {
       userId,
@@ -40,12 +45,12 @@ class CommentService {
     const { commentId } = req.params;
     const { userId } = res.app.locals.user;
     const { comment } = req.body;
-    if (!comment) throw new Error('댓글을 작성해주세요.');
+    if (!comment) throw new AppError('댓글을 작성해주세요.', 400);
 
     const comments = await Comments.findByComment(+commentId);
-    if (!comments) throw new Error('잘못된 요청입니다.');
+    if (!comments) throw new AppError('잘못된 요청입니다.', 400);
 
-    if (userId !== comments!.userId) throw new Error('수정 권한이 없습니다.');
+    if (userId !== comments!.userId) throw new AppError('수정 권한이 없습니다.', 403);
     await Comments.updateComment(+commentId, comment);
   };
 
@@ -53,9 +58,9 @@ class CommentService {
     const { commentId } = req.params;
     const { userId } = res.app.locals.user;
     const comments = await Comments.findByComment(+commentId);
-    if (!comments) throw new Error('잘못된 요청입니다.');
+    if (!comments) throw new AppError('잘못된 요청입니다.', 400);
 
-    if (userId !== comments!.userId) throw new Error('삭제 권한이 없습니다.');
+    if (userId !== comments!.userId) throw new AppError('삭제 권한이 없습니다.', 403);
     await Comments.deleteComment(+commentId, +userId);
   };
 

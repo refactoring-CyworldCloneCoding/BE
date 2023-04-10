@@ -16,7 +16,7 @@ class CommentsController {
   createComment = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await Comments.createComment(req, res);
-      res.status(200).json({ msg: '댓글이 작성되었습니다.' });
+      res.status(201).json({ msg: '댓글이 작성되었습니다.' });
     } catch (error: any) {
       res.status(400).json({ msg: error.message });
       next(error);

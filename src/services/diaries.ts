@@ -63,7 +63,7 @@ class DiaryService {
     const { user } = res.app.locals;
 
     const diary = await Diaries.findOneDiary(+diaryId);
-    if (!diary) throw new AppError('잘못된 요청입니다.', 401);
+    if (!diary) throw new AppError('잘못된 요청입니다.', 400);
     const file = req.file as Express.MulterS3.File;
 
     const imageFileName = file ? file.key : undefined;
