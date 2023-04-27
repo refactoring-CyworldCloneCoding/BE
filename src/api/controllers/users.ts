@@ -16,6 +16,8 @@ export default {
       const { email, name, password, confirm, gender, birth } =
         await Joi.signupSchema.validateAsync(req.body);
 
+        console.log(req.body)
+
       if (password !== confirm)
         throw new AppError('비밀번호가 일치하지 않습니다.', 400);
 
